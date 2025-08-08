@@ -1,0 +1,177 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Cybersecurity Portfolio Design System - Dark Mode with Vibrant Accents */
+
+@layer base {
+  :root {
+    /* Dark cybersecurity theme */
+    --background: 220 27% 8%;
+    --foreground: 210 40% 98%;
+
+    --card: 220 25% 12%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 220 25% 12%;
+    --popover-foreground: 210 40% 98%;
+
+    /* Cybersecurity green primary */
+    --primary: 142 76% 36%;
+    --primary-foreground: 220 27% 8%;
+
+    /* Electric blue secondary */
+    --secondary: 217 91% 60%;
+    --secondary-foreground: 220 27% 8%;
+
+    --muted: 220 15% 20%;
+    --muted-foreground: 215 20% 65%;
+
+    /* Neon green accent */
+    --accent: 142 76% 50%;
+    --accent-foreground: 220 27% 8%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 15% 25%;
+    --input: 220 15% 20%;
+    --ring: 142 76% 50%;
+
+    --radius: 0.75rem;
+
+    /* Custom cybersecurity colors */
+    --cyber-blue: 217 91% 60%;
+    --cyber-green: 142 76% 50%;
+    --cyber-dark: 220 27% 8%;
+    --cyber-gray: 220 15% 20%;
+    --cyber-light: 215 20% 65%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--cyber-blue)), hsl(var(--cyber-green)));
+    --gradient-dark: linear-gradient(135deg, hsl(var(--background)), hsl(var(--cyber-gray)));
+    --gradient-glow: linear-gradient(135deg, hsl(var(--cyber-green) / 0.2), hsl(var(--cyber-blue) / 0.2));
+    
+    /* Shadows */
+    --shadow-glow: 0 0 40px hsl(var(--cyber-green) / 0.3);
+    --shadow-blue-glow: 0 0 40px hsl(var(--cyber-blue) / 0.3);
+    --shadow-card: 0 10px 30px -10px hsl(var(--cyber-dark) / 0.8);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  /* Light mode variations (if needed for future toggle) */
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 142 76% 36%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 217 91% 60%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 47%;
+    --accent: 142 76% 50%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91%;
+    --input: 214.3 31.8% 91%;
+    --ring: 142 76% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, 'Courier New', monospace;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--cyber-gray));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--cyber-green));
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--cyber-blue));
+  }
+}
+
+@layer components {
+  /* Glow effects */
+  .glow-green {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .glow-blue {
+    box-shadow: var(--shadow-blue-glow);
+  }
+
+  /* Text glow effects */
+  .text-glow-green {
+    text-shadow: 0 0 20px hsl(var(--cyber-green) / 0.5);
+  }
+
+  .text-glow-blue {
+    text-shadow: 0 0 20px hsl(var(--cyber-blue) / 0.5);
+  }
+
+  /* Animated border */
+  .border-animated {
+    position: relative;
+    border: 1px solid transparent;
+    background: linear-gradient(hsl(var(--background)), hsl(var(--background))) padding-box,
+                var(--gradient-primary) border-box;
+  }
+
+  /* Hover animations */
+  .hover-lift {
+    transition: var(--transition-smooth);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Cyber grid pattern */
+  .cyber-grid {
+    background-image: 
+      linear-gradient(hsl(var(--cyber-green) / 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--cyber-green) / 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+}
