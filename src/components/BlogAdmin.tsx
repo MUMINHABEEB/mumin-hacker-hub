@@ -154,10 +154,12 @@ ${post.content}`;
 
       if (response.ok) {
         setSaveMessage('✅ Post published successfully! Live on website in 1-2 minutes.');
+        // Reset form immediately after successful publish
         setTimeout(() => {
           resetForm();
+          setSaveMessage(''); // Clear the success message
           loadPostsData();
-        }, 2000);
+        }, 1500);
       } else {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(`GitHub API Error: ${errorData.message || response.status}`);
@@ -220,6 +222,7 @@ ${post.content}`;
       excerpt: '',
       content: ''
     });
+    setSaveMessage(''); // Clear any save messages
     setIsCreating(false);
     setIsEditing(false);
     setEditingPost(null);
@@ -241,6 +244,7 @@ ${post.content}`;
 
   const startCreating = () => {
     resetForm();
+    setSaveMessage(''); // Clear any previous messages
     setIsCreating(true);
     setIsEditing(false);
     setEditingPost(null);
