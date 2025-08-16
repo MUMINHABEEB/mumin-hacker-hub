@@ -42,3 +42,5 @@ Since a lot of services are now cloud-based, I realized that security has shifte
 🚀 Why I Care About This
 
 For me, cybersecurity is not only about protecting systems but also about protecting \*\*trust\*\*. If someone loses their money or data, it’s not just a technical issue, it’s an emotional one too. That’s why I’m motivated to learn more — whether it’s SOC analysis, penetration testing, or cloud security.
+
+hi
