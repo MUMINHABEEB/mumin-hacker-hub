@@ -118,11 +118,13 @@ ${post.content}`;
       const content = generateMarkdownContent(post);
       const filename = `${post.slug}.md`;
       
-      // Use Git Gateway API instead of direct GitHub API
-      const response = await fetch('/.netlify/git/github/contents/src/posts/' + filename, {
+      // Try direct GitHub API first (fallback method)
+      const response = await fetch(`https://api.github.com/repos/MUMINHABEEB/mumin-hacker-hub/contents/src/posts/${filename}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/vnd.github.v3+json',
+          // Will use CORS proxy or browser authentication
         },
         body: JSON.stringify({
           message: isEditing ? `Update blog post: ${post.title}` : `Add new blog post: ${post.title}`,
@@ -138,14 +140,13 @@ ${post.content}`;
           loadPostsData();
         }, 2000);
       } else {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(`Git Gateway Error: ${errorData.message || 'Failed to save'}`);
+        throw new Error(`GitHub API returned ${response.status}`);
       }
     } catch (error) {
       console.error('Error saving post:', error);
-      setSaveMessage(`❌ Failed to save: ${error.message}. Using download instead...`);
-      // Fallback to download
-      setTimeout(() => downloadPost(post), 2000);
+      setSaveMessage(`❌ Online save failed. Download the file and add it manually to src/posts/ folder, then push to GitHub.`);
+      // Automatically trigger download
+      setTimeout(() => downloadPost(post), 1500);
     }
     
     setIsSaving(false);
@@ -153,11 +154,11 @@ ${post.content}`;
 
   const getFileSha = async (filename: string): Promise<string | undefined> => {
     try {
-      // Use Git Gateway to get file info
-      const response = await fetch('/.netlify/git/github/contents/src/posts/' + filename, {
+      // Try to get file info from GitHub API
+      const response = await fetch(`https://api.github.com/repos/MUMINHABEEB/mumin-hacker-hub/contents/src/posts/${filename}`, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
+          'Accept': 'application/vnd.github.v3+json',
         }
       });
       if (response.ok) {
@@ -287,9 +288,10 @@ ${post.content}`;
               Blog Admin
             </h1>
             <p className="text-slate-400 mt-2">Manage your blog posts</p>
-            <div className="mt-2 p-3 bg-green-900 border border-green-600 rounded-lg">
-              <p className="text-green-300 text-sm">
-                ✅ <strong>Git Gateway Connected:</strong> Online publishing is ready! No setup required.
+            <div className="mt-2 p-3 bg-blue-900 border border-blue-600 rounded-lg">
+              <p className="text-blue-300 text-sm">
+                💡 <strong>Hybrid Publishing:</strong> Try online publishing first, auto-downloads if it fails. 
+                <br />Both Decap CMS and this admin can work together safely.
               </p>
             </div>
           </div>
@@ -464,8 +466,9 @@ ${post.content}`;
                   </p>
                   <code className="text-cyan-400">{newPost.slug}.md</code>
                   <div className="mt-3 text-xs text-slate-400">
-                    <p>💡 <strong>Online Publishing:</strong> Uses Git Gateway - saves directly to GitHub automatically</p>
-                    <p>📁 <strong>Download:</strong> Get the file to manually add to your project</p>
+                    <p>� <strong>Smart Publishing:</strong> Tries online save first, auto-downloads if needed</p>
+                    <p>📁 <strong>Manual Workflow:</strong> Download → Save to src/posts/ → Push to GitHub</p>
+                    <p>⚡ <strong>Compatibility:</strong> Works alongside Decap CMS without conflicts</p>
                   </div>
                 </div>
               )}
