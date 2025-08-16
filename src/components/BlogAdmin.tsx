@@ -111,19 +111,87 @@ ${post.content}`;
   };
 
   const savePostToGitHub = async (post: NewPost) => {
-    // Simple download-only approach to avoid API calls and server usage
-    downloadPost(post);
+    setIsSaving(true);
+    setSaveMessage('');
+    
+    try {
+      const content = generateMarkdownContent(post);
+      const filename = `${post.slug}.md`;
+      
+      // Try using the same authentication as Decap CMS
+      const authData = localStorage.getItem('gotrue.user');
+      if (!authData) {
+        setSaveMessage('❌ Not authenticated. Please login through Decap CMS first at /admin/');
+        setTimeout(() => downloadPost(post), 2000);
+        setIsSaving(false);
+        return;
+      }
+      
+      const user = JSON.parse(authData);
+      const token = user.token?.access_token;
+      
+      if (!token) {
+        setSaveMessage('❌ No access token found. Please re-login through Decap CMS.');
+        setTimeout(() => downloadPost(post), 2000);
+        setIsSaving(false);
+        return;
+      }
+      
+      // Get file SHA if editing
+      let sha: string | undefined;
+      if (isEditing) {
+        sha = await getFileSha(filename, token);
+      }
+      
+      // Use GitHub API with the authentication token from Decap CMS
+      const response = await fetch(`https://api.github.com/repos/MUMINHABEEB/mumin-hacker-hub/contents/src/posts/${filename}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `token ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/vnd.github.v3+json',
+        },
+        body: JSON.stringify({
+          message: isEditing ? `Update blog post: ${post.title}` : `Add new blog post: ${post.title}`,
+          content: btoa(unescape(encodeURIComponent(content))),
+          ...(sha && { sha })
+        })
+      });
+
+      if (response.ok) {
+        setSaveMessage('✅ Post published successfully! Live on website in 1-2 minutes.');
+        setTimeout(() => {
+          resetForm();
+          loadPostsData();
+        }, 2000);
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`GitHub API Error: ${errorData.message || response.status}`);
+      }
+    } catch (error) {
+      console.error('Error saving post:', error);
+      setSaveMessage(`❌ Direct publishing failed: ${error.message}. Downloading file instead...`);
+      setTimeout(() => downloadPost(post), 2000);
+    }
+    
+    setIsSaving(false);
   };
 
-  const getFileSha = async (filename: string): Promise<string | undefined> => {
+  const getFileSha = async (filename: string, token?: string): Promise<string | undefined> => {
     try {
-      // Try to get file info from GitHub API
+      const headers: any = {
+        'Accept': 'application/vnd.github.v3+json',
+      };
+      
+      if (token) {
+        headers['Authorization'] = `token ${token}`;
+      }
+      
       const response = await fetch(`https://api.github.com/repos/MUMINHABEEB/mumin-hacker-hub/contents/src/posts/${filename}`, {
         method: 'GET',
-        headers: {
-          'Accept': 'application/vnd.github.v3+json',
-        }
+        headers
       });
+      
       if (response.ok) {
         const data = await response.json();
         return data.sha;
@@ -253,8 +321,8 @@ ${post.content}`;
             <p className="text-slate-400 mt-2">Manage your blog posts</p>
             <div className="mt-2 p-3 bg-blue-900 border border-blue-600 rounded-lg">
               <p className="text-blue-300 text-sm">
-                💡 <strong>Hybrid Publishing:</strong> Try online publishing first, auto-downloads if it fails. 
-                <br />Both Decap CMS and this admin can work together safely.
+                � <strong>Direct Publishing:</strong> Login through Decap CMS first, then publish directly to website!
+                <br />Both Decap CMS (/admin) and this admin work together seamlessly.
               </p>
             </div>
           </div>
@@ -390,8 +458,8 @@ ${post.content}`;
                     </>
                   ) : (
                     <>
-                      <Download className="w-4 h-4 mr-2" />
-                      {isEditing ? 'Download Updated Post' : 'Download New Post'}
+                      <Globe className="w-4 h-4 mr-2" />
+                      {isEditing ? 'Publish Changes' : 'Publish to Website'}
                     </>
                   )}
                 </Button>
