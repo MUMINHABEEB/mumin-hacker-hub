@@ -31,31 +31,31 @@ const Footer = () => {
   };
 
   return (
-    <footer className="py-12 border-t border-border/50 bg-background/80 backdrop-blur-sm">
-      <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-3 gap-8 items-center">
+    <footer className="py-8 sm:py-12 border-t border-border/50 bg-background/80 backdrop-blur-sm">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-6 sm:gap-8 md:grid-cols-3 items-center">
           {/* Logo & Description */}
           <div className="text-center md:text-left">
             <button 
               onClick={scrollToTop}
-              className="text-2xl font-bold font-cyber text-primary hover:text-primary/80 transition-colors duration-300 mb-2"
+              className="text-xl sm:text-2xl font-bold font-cyber text-primary hover:text-primary/80 transition-colors duration-300 mb-2"
             >
               &lt;MH/&gt;
             </button>
-            <p className="text-muted-foreground font-mono text-sm">
+            <p className="text-muted-foreground font-mono text-xs sm:text-sm">
               Cybersecurity Researcher & Enthusiast
             </p>
           </div>
 
           {/* Social Links */}
-          <div className="flex justify-center gap-6">
+          <div className="flex justify-center gap-4 sm:gap-6">
             {socialLinks.map((link, index) => (
               <a
                 key={index}
                 href={link.href}
                 target={link.href.startsWith('http') ? '_blank' : undefined}
                 rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                className="p-3 bg-card border border-border/50 rounded-lg hover:border-primary/30 hover:bg-primary/5 transition-all duration-300 group"
+                className="p-2 sm:p-3 bg-card border border-border/50 rounded-lg hover:border-primary/30 hover:bg-primary/5 transition-all duration-300 group"
                 aria-label={link.label}
               >
                 <span className="text-muted-foreground group-hover:text-primary transition-colors duration-300">
@@ -67,7 +67,7 @@ const Footer = () => {
 
           {/* Copyright */}
           <div className="text-center md:text-right">
-            <p className="text-muted-foreground font-mono text-sm">
+            <p className="text-muted-foreground font-mono text-xs sm:text-sm">
               © {currentYear} Mumin Habeeb
             </p>
             <p className="text-muted-foreground font-mono text-xs mt-1">
@@ -77,18 +77,18 @@ const Footer = () => {
         </div>
 
         {/* Bottom Section */}
-        <div className="mt-12 pt-8 border-t border-border/30">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2 text-muted-foreground font-mono text-sm">
-              <Code size={16} className="text-primary" />
-              <span>Built with React, TypeScript & Tailwind CSS</span>
+        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-border/30">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
+            <div className="flex items-center gap-2 text-muted-foreground font-mono text-xs sm:text-sm">
+              <Code size={14} className="text-primary flex-shrink-0" />
+              <span className="text-center md:text-left">Built with React, TypeScript & Tailwind CSS</span>
             </div>
             
-            <div className="flex items-center gap-4 text-muted-foreground font-mono text-sm">
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-muted-foreground font-mono text-xs sm:text-sm">
               <span>Open Source</span>
-              <span>•</span>
+              <span className="hidden sm:inline">•</span>
               <span>MIT License</span>
-              <span>•</span>
+              <span className="hidden sm:inline">•</span>
               <a 
                 href="#contact" 
                 className="text-primary hover:text-primary/80 transition-colors duration-300"
@@ -104,7 +104,7 @@ const Footer = () => {
         </div>
 
         {/* Tech Pattern */}
-        <div className="mt-8 flex justify-center">
+        <div className="mt-6 sm:mt-8 flex justify-center">
           <div className="flex items-center gap-2 text-primary/30 font-mono text-xs">
             <span>&lt;</span>
             <span className="animate-pulse">●</span>

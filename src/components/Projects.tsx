@@ -44,10 +44,10 @@ const Projects = () => {
   ];
 
   return (
-    <section id="projects" className="py-20 relative">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold font-cyber mb-4">
+    <section id="projects" className="py-16 sm:py-20 relative">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-cyber mb-4">
             Featured <span className="text-transparent bg-gradient-primary bg-clip-text">Projects</span>
           </h2>
           <p className="text-xl text-muted-foreground font-mono max-w-2xl mx-auto">
@@ -56,46 +56,46 @@ const Projects = () => {
         </div>
 
         {/* Featured Project */}
-        <div className="mb-16 animate-slide-up">
-          <Card className="p-8 md:p-12 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-sm border-primary/30 hover:border-primary/50 transition-all duration-500 hover-lift">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-6">
-                <div className="space-y-3">
+        <div className="mb-12 sm:mb-16 animate-slide-up">
+          <Card className="p-6 sm:p-8 md:p-12 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-sm border-primary/30 hover:border-primary/50 transition-all duration-500 hover-lift">
+            <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+              <div className="space-y-4 sm:space-y-6">
+                <div className="space-y-2 sm:space-y-3">
                   <div className="flex items-center gap-3">
-                    <Shield className="text-primary glow-green" size={32} />
-                    <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-mono">
+                    <Shield className="text-primary glow-green" size={24} />
+                    <span className="px-2 sm:px-3 py-1 bg-primary/10 text-primary rounded-full text-xs sm:text-sm font-mono">
                       {featuredProject.type}
                     </span>
                   </div>
-                  <h3 className="text-3xl md:text-4xl font-bold font-cyber text-transparent bg-gradient-primary bg-clip-text">
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold font-cyber text-transparent bg-gradient-primary bg-clip-text">
                     {featuredProject.title}
                   </h3>
-                  <p className="text-lg text-muted-foreground font-mono leading-relaxed">
+                  <p className="text-base sm:text-lg text-muted-foreground font-mono leading-relaxed">
                     {featuredProject.description}
                   </p>
                 </div>
 
-                <p className="text-muted-foreground font-mono leading-relaxed">
+                <p className="text-sm sm:text-base text-muted-foreground font-mono leading-relaxed">
                   {featuredProject.longDescription}
                 </p>
 
-                <div className="space-y-4">
-                  <h4 className="font-cyber text-lg">Key Features:</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div className="space-y-3 sm:space-y-4">
+                  <h4 className="font-cyber text-base sm:text-lg">Key Features:</h4>
+                  <div className="grid grid-cols-1 gap-2">
                     {featuredProject.features.map((feature, index) => (
                       <div key={index} className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-primary rounded-full"></div>
-                        <span className="text-sm font-mono text-muted-foreground">{feature}</span>
+                        <div className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-primary rounded-full flex-shrink-0"></div>
+                        <span className="text-xs sm:text-sm font-mono text-muted-foreground">{feature}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
                   {featuredProject.tech.map((tech, index) => (
                     <span 
                       key={index}
-                      className="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-sm font-mono border border-secondary/20"
+                      className="px-2 sm:px-3 py-1 bg-secondary/10 text-secondary rounded-full text-xs sm:text-sm font-mono border border-secondary/20"
                     >
                       {tech}
                     </span>
@@ -150,19 +150,19 @@ const Projects = () => {
         </div>
 
         {/* Upcoming Projects */}
-        <div className="space-y-8">
-          <h3 className="text-2xl font-bold font-cyber text-center">
+        <div className="space-y-6 sm:space-y-8">
+          <h3 className="text-xl sm:text-2xl font-bold font-cyber text-center">
             <span className="text-accent">$</span> Upcoming Projects
           </h3>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {upcomingProjects.map((project, index) => (
               <Card 
                 key={index}
-                className="p-6 bg-card/50 backdrop-blur-sm border-border/50 hover:border-accent/30 transition-all duration-300 hover-lift animate-slide-up"
+                className="p-4 sm:p-6 bg-card/50 backdrop-blur-sm border-border/50 hover:border-accent/30 transition-all duration-300 hover-lift animate-slide-up"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-center justify-between">
                     {project.icon}
                     <span className={`px-2 py-1 rounded-full text-xs font-mono ${
@@ -175,8 +175,8 @@ const Projects = () => {
                   </div>
                   
                   <div>
-                    <h4 className="text-lg font-bold font-cyber mb-2">{project.title}</h4>
-                    <p className="text-muted-foreground font-mono text-sm leading-relaxed">
+                    <h4 className="text-base sm:text-lg font-bold font-cyber mb-2">{project.title}</h4>
+                    <p className="text-muted-foreground font-mono text-xs sm:text-sm leading-relaxed">
                       {project.description}
                     </p>
                   </div>

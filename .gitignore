@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Decap CMS uploads (optional to commit). Keep tracked if you want media versioned.
+public/uploads

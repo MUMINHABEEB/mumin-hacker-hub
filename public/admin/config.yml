@@ -1,0 +1,39 @@
+backend:
+  name: git-gateway
+  branch: main
+
+site_url: "https://YOUR_NETLIFY_SITE_URL"
+logo_url: "/favicon.ico"
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+publish_mode: editorial_workflow
+
+collections:
+  - name: "posts"
+    label: "Blog Posts"
+    label_singular: "Post"
+    folder: "src/posts"
+    create: true
+    slug: "{{slug}}"
+    path: "{{slug}}.md"
+    extension: "md"
+    format: "frontmatter"
+    sort: "date:desc"
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: slug, label: Slug, widget: string, hint: "URL path. Keep it lowercase-with-dashes." }
+      - { name: date, label: Date, widget: datetime }
+      - { name: tags, label: Tags, widget: list, required: false }
+      - { name: excerpt, label: Excerpt, widget: text, required: false, hint: "Short summary for listings and SEO (160 chars)." }
+      - { name: body, label: Body, widget: markdown }
+
+editor:
+  preview: false
+
+slug:
+  encoding: "unicode"
+  clean_accents: true
+  sanitize_replacement: "-"
+
+local_backend: true

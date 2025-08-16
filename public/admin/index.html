@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Content Manager</title>
+  </head>
+  <body>
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <script>
+      // Attempt multiple glob patterns for robustness (Windows path edge cases)
+      const globA = import.meta.glob('../posts/*.md', { eager: true, as: 'raw' });
+      const globB = import.meta.glob('../posts/**/*.md', { eager: true, as: 'raw' });
+      const globC = import.meta.glob('/src/posts/*.md', { eager: true, as: 'raw' });
+      const globD = import.meta.glob('/src/posts/**/*.md', { eager: true, as: 'raw' });
+
+      const markdownModules = {
+        ...globA,
+        ...globB,
+        ...globC,
+        ...globD
+      } as Record<string, string>;
+
+      Object.keys(window.__BLOG_POSTS__ || {})
+    </script>
+  </body>
+</html>

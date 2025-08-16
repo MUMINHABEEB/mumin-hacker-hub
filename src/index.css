@@ -174,4 +174,45 @@
       linear-gradient(90deg, hsl(var(--cyber-green) / 0.1) 1px, transparent 1px);
     background-size: 50px 50px;
   }
+
+  /* Blog text contrast improvements */
+  .prose {
+    color: hsl(var(--foreground));
+  }
+
+  .prose h1,
+  .prose h2, 
+  .prose h3,
+  .prose h4,
+  .prose h5,
+  .prose h6 {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  .prose p,
+  .prose li,
+  .prose blockquote {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  .prose strong {
+    color: hsl(var(--primary)) !important;
+    font-weight: 600;
+  }
+
+  .prose code {
+    color: hsl(var(--accent)) !important;
+    background-color: hsl(var(--muted)) !important;
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+  }
+
+  .prose a {
+    color: hsl(var(--primary)) !important;
+    text-decoration: underline;
+  }
+
+  .prose a:hover {
+    color: hsl(var(--accent)) !important;
+  }
 }

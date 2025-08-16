@@ -18,26 +18,26 @@ const About = () => {
   ];
 
   return (
-    <section id="about" className="py-20 relative">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold font-cyber mb-4">
+    <section id="about" className="py-16 sm:py-20 relative">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-cyber mb-4">
             About <span className="text-transparent bg-gradient-primary bg-clip-text">Me</span>
           </h2>
-          <p className="text-xl text-muted-foreground font-mono max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-muted-foreground font-mono max-w-2xl mx-auto">
             <span className="text-primary">//</span> Driven by curiosity and passion for cybersecurity
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
+        <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-start">
           {/* Bio Section */}
-          <div className="space-y-8 animate-slide-up">
-            <Card className="p-8 bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300 hover-lift">
-              <div className="flex items-center gap-3 mb-6">
-                <Target className="text-primary" size={24} />
-                <h3 className="text-2xl font-bold font-cyber">My Journey</h3>
+          <div className="space-y-6 sm:space-y-8 animate-slide-up">
+            <Card className="p-6 sm:p-8 bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300 hover-lift">
+              <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                <Target className="text-primary" size={20} />
+                <h3 className="text-xl sm:text-2xl font-bold font-cyber">My Journey</h3>
               </div>
-              <div className="space-y-4 text-muted-foreground font-mono leading-relaxed">
+              <div className="space-y-3 sm:space-y-4 text-muted-foreground font-mono leading-relaxed text-sm sm:text-base">
                 <p>
                   My fascination with technology began early, but it was the world of cybersecurity 
                   that truly captured my imagination. The constant evolution of threats and the 

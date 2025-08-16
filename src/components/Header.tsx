@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,11 +27,24 @@ const Header = () => {
   ];
 
   const scrollToSection = (href: string) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setIsMenuOpen(false);
+    // If we're not on the home page, navigate to home first
+    if (location.pathname !== '/') {
+      navigate('/');
+      // Wait for navigation then scroll
+      setTimeout(() => {
+        const element = document.querySelector(href);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    } else {
+      // We're on home page, just scroll
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
     }
+    setIsMenuOpen(false);
   };
 
   return (
@@ -42,9 +58,9 @@ const Header = () => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <div className="text-xl font-bold font-cyber text-primary">
+          <Link to="/" className="text-xl font-bold font-cyber text-primary hover:text-accent transition-colors">
             &lt;MH/&gt;
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
@@ -58,6 +74,10 @@ const Header = () => {
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-primary transition-all duration-300 group-hover:w-full"></span>
               </button>
             ))}
+            <Link to="/blog" className="text-muted-foreground hover:text-primary transition-colors duration-300 relative font-mono text-sm">
+              Blog
+              <span className="absolute -bottom-1 left-0 block w-0 h-0.5 bg-gradient-primary transition-all duration-300 hover:w-full" />
+            </Link>
           </nav>
 
           {/* CTA Button */}
@@ -92,6 +112,7 @@ const Header = () => {
                   {item.label}
                 </button>
               ))}
+              <Link to="/blog" className="text-muted-foreground hover:text-primary transition-colors duration-300 font-mono">Blog</Link>
               <Button 
                 onClick={() => scrollToSection('#contact')}
                 className="bg-gradient-primary hover:glow-green transition-all duration-300 font-mono mt-4 w-full"
