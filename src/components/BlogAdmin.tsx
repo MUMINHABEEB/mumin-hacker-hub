@@ -31,6 +31,8 @@ const BlogAdmin: React.FC = () => {
   const [editingPost, setEditingPost] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
+  const [githubToken, setGithubToken] = useState('');
+  const [isTokenSaved, setIsTokenSaved] = useState(false);
   const [newPost, setNewPost] = useState<NewPost>({
     title: '',
     slug: '',
@@ -46,6 +48,13 @@ const BlogAdmin: React.FC = () => {
     if (auth === 'authenticated') {
       setIsAuthenticated(true);
       loadPostsData();
+    }
+    
+    // Check for saved GitHub token
+    const savedToken = localStorage.getItem('github-token');
+    if (savedToken && savedToken.trim()) {
+      setGithubToken(savedToken);
+      setIsTokenSaved(true);
     }
   }, []);
 
@@ -67,6 +76,36 @@ const BlogAdmin: React.FC = () => {
     setIsAuthenticated(false);
     sessionStorage.removeItem('blog-admin-auth');
     setLoginForm({ username: '', password: '' });
+  };
+
+  const refreshPostFromGitHub = async (filename: string) => {
+    try {
+      const authToken = localStorage.getItem('github-token') || process.env.REACT_APP_GITHUB_TOKEN;
+      
+      if (!authToken) {
+        console.log('No auth token available for refreshing post');
+        return;
+      }
+      
+      const response = await fetch(`https://api.github.com/repos/MUMINHABEEB/mumin-hacker-hub/contents/src/posts/${filename}`, {
+        headers: {
+          'Authorization': `token ${authToken}`,
+          'Accept': 'application/vnd.github.v3+json',
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        const content = atob(data.content);
+        console.log('Refreshed post content from GitHub:', filename);
+        // Force a complete reload to get the latest data
+        setTimeout(() => window.location.reload(), 500);
+      }
+    } catch (error) {
+      console.error('Error refreshing post from GitHub:', error);
+      // Fallback to page reload
+      setTimeout(() => window.location.reload(), 500);
+    }
   };
 
   const loadPostsData = () => {
@@ -154,11 +193,17 @@ ${post.content}`;
 
       if (response.ok) {
         setSaveMessage('✅ Post published successfully! Live on website in 1-2 minutes.');
-        // Reset form immediately after successful publish
+        // Reset form and refresh data after successful publish
         setTimeout(() => {
-          resetForm();
-          setSaveMessage(''); // Clear the success message
-          loadPostsData();
+          if (isEditing) {
+            // If editing, refresh the specific post from GitHub
+            refreshPostFromGitHub(filename);
+          } else {
+            // If creating new post, reset form and reload
+            resetForm();
+            setSaveMessage('');
+            loadPostsData();
+          }
         }, 1500);
       } else {
         const errorData = await response.json().catch(() => ({}));
@@ -320,43 +365,85 @@ ${post.content}`;
             </h1>
             <p className="text-slate-400 mt-2">Manage your blog posts</p>
             <div className="mt-2 p-4 bg-slate-800 border border-slate-600 rounded-lg">
-              <h3 className="text-cyan-400 font-semibold mb-2">🚀 Direct Publishing Setup</h3>
-              <p className="text-slate-300 text-sm mb-3">
-                To publish directly to your website, you need a GitHub Personal Access Token:
-              </p>
-              <ol className="text-slate-300 text-sm space-y-1 mb-3">
-                <li>1. Go to GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)</li>
-                <li>2. Create new token with <code className="bg-slate-700 px-1 rounded">repo</code> permissions</li>
-                <li>3. Copy the token and paste it below:</li>
-              </ol>
-              <div className="flex gap-2">
-                <Input
-                  type="password"
-                  placeholder="Enter your GitHub token..."
-                  className="bg-slate-700 border-slate-500 text-white flex-1"
-                  onChange={(e) => {
-                    if (e.target.value.trim()) {
-                      localStorage.setItem('github-token', e.target.value.trim());
-                    }
-                  }}
-                />
-                <Button 
-                  size="sm"
-                  onClick={() => {
-                    const token = localStorage.getItem('github-token');
-                    if (token) {
-                      alert('✅ Token saved! You can now publish directly to your website.');
-                    } else {
-                      alert('❌ Please enter a valid token first.');
-                    }
-                  }}
-                  className="bg-green-600 hover:bg-green-700"
-                >
-                  Save
-                </Button>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-cyan-400 font-semibold">🚀 Direct Publishing Setup</h3>
+                {isTokenSaved && (
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="text-green-400 text-sm">Token Active</span>
+                  </div>
+                )}
               </div>
+              
+              {!isTokenSaved ? (
+                <>
+                  <p className="text-slate-300 text-sm mb-3">
+                    To publish directly to your website, you need a GitHub Personal Access Token:
+                  </p>
+                  <ol className="text-slate-300 text-sm space-y-1 mb-3">
+                    <li>1. Go to GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)</li>
+                    <li>2. Create new token with <code className="bg-slate-700 px-1 rounded">repo</code> permissions</li>
+                    <li>3. Copy the token and paste it below:</li>
+                  </ol>
+                  <div className="flex gap-2">
+                    <Input
+                      type="password"
+                      placeholder="Enter your GitHub token..."
+                      className="bg-slate-700 border-slate-500 text-white flex-1"
+                      value={githubToken}
+                      onChange={(e) => setGithubToken(e.target.value)}
+                    />
+                    <Button 
+                      size="sm"
+                      onClick={() => {
+                        if (githubToken.trim()) {
+                          localStorage.setItem('github-token', githubToken.trim());
+                          setIsTokenSaved(true);
+                        }
+                      }}
+                      className="bg-green-600 hover:bg-green-700"
+                      disabled={!githubToken.trim()}
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="text-green-300 text-sm mb-3">
+                    ✅ GitHub token is configured! You can publish directly to your website.
+                  </p>
+                  <div className="flex gap-2">
+                    <div className="flex-1 p-2 bg-slate-700 rounded text-slate-300 text-sm">
+                      Token: {"*".repeat(20)}...{githubToken.slice(-4)}
+                    </div>
+                    <Button 
+                      size="sm"
+                      onClick={() => {
+                        localStorage.removeItem('github-token');
+                        setGithubToken('');
+                        setIsTokenSaved(false);
+                      }}
+                      variant="outline"
+                      className="border-red-500 text-red-400 hover:bg-red-500 hover:text-white"
+                    >
+                      Remove
+                    </Button>
+                    <Button 
+                      size="sm"
+                      onClick={() => {
+                        setIsTokenSaved(false);
+                      }}
+                      className="bg-cyan-600 hover:bg-cyan-700"
+                    >
+                      Update
+                    </Button>
+                  </div>
+                </>
+              )}
+              
               <p className="text-slate-400 text-xs mt-2">
-                💡 Without a token, posts will be downloaded for manual upload.
+                💡 {isTokenSaved ? 'Your token is saved securely in your browser.' : 'Without a token, posts will be downloaded for manual upload.'}
               </p>
             </div>
           </div>
