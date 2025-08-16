@@ -5,8 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import BlogList from "./pages/BlogList.jsx";
-import BlogPost from "./pages/BlogPost.jsx";
+import BlogList from "./pages/BlogList";
+import BlogPost from "./pages/BlogPost";
 
 const queryClient = new QueryClient();
 

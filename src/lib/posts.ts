@@ -96,6 +96,9 @@ export function loadPosts(): Post[] {
   
   const posts: Post[] = [];
   
+  console.log('[Blog] Starting loadPosts...');
+  console.log('[Blog] markdownModules keys:', Object.keys(markdownModules));
+  
   // First, try to load from actual markdown files
   if (Object.keys(markdownModules).length > 0) {
     console.log('[Blog] Loading from markdown files');
@@ -118,16 +121,20 @@ export function loadPosts(): Post[] {
         console.error('Failed to parse markdown file', path, e);
       }
     });
+  } else {
+    console.log('[Blog] No markdown files found via glob');
   }
   
   // If no markdown files loaded, use fallback posts
   if (posts.length === 0) {
-    console.log('[Blog] Using fallback posts');
+    console.log('[Blog] Using fallback posts, count:', FALLBACK_POSTS.length);
     posts.push(...FALLBACK_POSTS);
   }
   
   posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   cached = posts;
+  
+  console.log('[Blog] Final posts loaded:', posts.length);
   
   if (typeof window !== 'undefined') {
     // @ts-ignore
