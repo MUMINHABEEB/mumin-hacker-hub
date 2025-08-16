@@ -12,83 +12,11 @@ export interface Post extends PostFrontmatter {
   content: string;
 }
 
-// Try to load markdown files using glob
-let markdownModules: Record<string, string> = {};
-
-try {
-  // Try different Vite glob syntax approaches
-  const modules1 = import.meta.glob("../posts/*.md", { 
-    eager: true, 
-    as: 'raw'
-  });
-  
-  const modules2 = import.meta.glob("../posts/*.md", { 
-    eager: true,
-    query: '?raw',
-    import: 'default'
-  });
-  
-  console.log('[Blog] Method 1 - as raw:', Object.keys(modules1));
-  console.log('[Blog] Method 2 - query raw:', Object.keys(modules2));
-  
-  // Use whichever method worked
-  markdownModules = Object.keys(modules1).length > 0 ? modules1 as Record<string, string> 
-                  : modules2 as Record<string, string>;
-  
-  console.log('[Blog] Selected modules:', Object.keys(markdownModules));
-  
-  if (Object.keys(markdownModules).length > 0) {
-    console.log('[Blog] Sample content preview:', Object.values(markdownModules)[0]?.slice(0, 200));
-  }
-  
-} catch (e) {
-  console.warn('[Blog] Could not load markdown files via glob:', e);
-}
-
-// Fallback posts for development and demo
-const FALLBACK_POSTS: Post[] = [
-  {
-    title: "Cybersecurity From My Perspective",
-    slug: "cybersecurity-from-my-perspective",
-    date: "2025-08-16T09:18:00.000Z",
-    tags: ["Cybersecurity", "InfoSec", "CloudSecurity", "PhishingAwareness", "SOCAnalysis"],
-    excerpt: "Learn practical cybersecurity tips, cloud security basics, and how to stay safe online from a tech enthusiast's perspective.",
-    content: `🔐 Cybersecurity From My Perspective
-
-Cybersecurity is something I've been learning and paying attention to because it's not just a tech buzzword anymore — it's part of our daily life. From emails to cloud storage, everything around us is connected, and that also means everything can be attacked.
-
-What I've learned so far is that **cybersecurity isn't just about tools, it's about awareness**. Even if you don't know how to use advanced hacking techniques or complicated defense systems, just being aware of threats already gives you a strong advantage.
-
-🕵️ Types of Threats I've Noticed
-
-1. Phishing – Fake emails or websites that trick you into giving your passwords.
-2. Weak Passwords – People still use \`123456\` or \`password\`. Hackers love that.
-3. Open Ports – If your system has unnecessary open ports, it's like leaving your door unlocked.
-4. Social Engineering – Hackers don't always break in with code, sometimes they just trick people.
-
-☁️ Cybersecurity & the Cloud
-
-Since a lot of services are now cloud-based, I realized that security has shifted. It's not just about protecting your PC anymore, but also about protecting data on platforms like AWS, Google Cloud, or Microsoft Azure. Cloud security is huge because businesses depend on it daily.
-
-🛡️ Basic Practices I Follow
-
-* Never click random links.
-* Use strong, unique passwords.
-* Keep software updated.
-* Double-check websites before entering sensitive info.
-* Learn continuously — because threats keep evolving.
-
-🚀 Why I Care About This
-
-For me, cybersecurity is not only about protecting systems but also about protecting **trust**. If someone loses their money or data, it's not just a technical issue, it's an emotional one too. That's why I'm motivated to learn more — whether it's SOC analysis, penetration testing, or cloud security.
-
----
-
-👉 This is not a complete cybersecurity guide. It's just what I know and practice right now. As I learn more, I'll share more.`
-  },
+// Hardcoded posts as a temporary solution
+const HARDCODED_POSTS: Post[] = [
   {
     title: "Hello World",
-    slug: "hello-world",
+    slug: "hello-world", 
     date: "2025-08-16T10:00:00.000Z",
     tags: ["intro", "welcome"],
     excerpt: "A first post to confirm the blog pipeline works with Decap CMS + Vite.",
@@ -102,71 +30,108 @@ For me, cybersecurity is not only about protecting systems but also about protec
 - Frontmatter drives title, date, tags, slug & excerpt
 
 Update or delete this post once you publish your own content from the CMS at \`/admin\`.`
+  },
+  {
+    title: "Test Post - Deployment Check",
+    slug: "test-deployment",
+    date: "2025-08-16T15:00:00.000Z", 
+    tags: ["test", "deployment"],
+    excerpt: "Testing if changes actually deploy to the live website",
+    content: `# This is a Test Post
+
+If you can see this on the live website, then the deployment is working!
+
+**Current time: August 16, 2025 - 3:00 PM**`
+  },
+  {
+    title: "Cybersecurity From My Perspective",
+    slug: "cybersecurity-from-my-perspective",
+    date: "2025-08-16T09:18:00.000Z",
+    tags: ["Cybersecurity", "InfoSec", "CloudSecurity", "PhishingAwareness", "SOCAnalysis", "PenetrationTesting", "CyberAwareness"],
+    excerpt: "Learn practical cybersecurity tips, cloud security basics, and how to stay safe online from a tech enthusiast's perspective.",
+    content: `# Cybersecurity From My Perspective - UPDATED VERSION
+
+**🚨 TEST UPDATE: This should appear on the live website! 🚨**
+
+As a cybersecurity enthusiast transitioning from accounting to the world of digital defense, I've gained unique insights into how businesses and individuals can protect themselves in our increasingly connected world.
+
+## The Reality of Modern Threats
+
+Every day, we face sophisticated cyber threats that can compromise our personal data, financial information, and digital identity. From my experience working with financial systems, I've seen firsthand how vulnerable organizations can be without proper security measures.
+
+## Essential Cybersecurity Practices
+
+### 1. Strong Password Management
+- Use a unique, complex password for every account
+- Enable two-factor authentication (2FA) wherever possible
+- Consider using a reputable password manager
+
+### 2. Email Security
+- Be cautious of suspicious emails and attachments
+- Verify sender identity before clicking links
+- Use encrypted email services when handling sensitive information
+
+### 3. Cloud Security Basics
+- Regularly review and update privacy settings
+- Use encryption for sensitive data storage
+- Implement proper access controls
+
+## My Learning Journey
+
+Currently pursuing BCA in Cloud and Security, I'm constantly expanding my knowledge in:
+- **SOC Analysis**: Understanding how to monitor and respond to security incidents
+- **Penetration Testing**: Learning ethical hacking techniques to identify vulnerabilities
+- **Cloud Security**: Mastering secure cloud infrastructure management
+
+## Practical Tips for Everyone
+
+1. **Keep Software Updated**: Regular updates patch security vulnerabilities
+2. **Backup Important Data**: Use the 3-2-1 backup rule (3 copies, 2 different media, 1 offsite)
+3. **Be Social Media Aware**: Limit personal information sharing
+4. **Use Secure Networks**: Avoid public WiFi for sensitive activities
+
+## Conclusion
+
+For me, cybersecurity is not only about protecting systems but also about protecting **trust**. If someone loses their money or data, it's not just a technical issue, it's an emotional one too. That's why I'm motivated to learn more — whether it's SOC analysis, penetration testing, or cloud security.
+
+---
+
+👉 This is not a complete cybersecurity guide. It's just what I know and practice right now. As I learn more, I'll share more.`
   }
 ];
 
+console.log('[Blog] Using hardcoded posts as fallback');
+
+// Cache for posts
 let cached: Post[] | null = null;
 
 export function loadPosts(): Post[] {
   if (cached) return cached;
   
-  const posts: Post[] = [];
+  console.log('[Blog] Loading hardcoded posts...');
+  console.log('[Blog] Posts count:', HARDCODED_POSTS.length);
   
-  console.log('[Blog] Starting loadPosts...');
-  console.log('[Blog] markdownModules keys:', Object.keys(markdownModules));
+  // Sort posts by date (newest first)
+  const posts = [...HARDCODED_POSTS].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   
-  // First, try to load from actual markdown files
-  if (Object.keys(markdownModules).length > 0) {
-    console.log('[Blog] Loading from markdown files');
-    Object.entries(markdownModules).forEach(([path, raw]) => {
-      try {
-        const { data, content } = matter(raw);
-        const fm = data as Partial<PostFrontmatter>;
-        if (fm.title && fm.slug && fm.date) {
-          const excerpt = fm.excerpt || content.replace(/[#>*_`\-]/g, "").slice(0, 160).trim();
-          posts.push({ 
-            title: fm.title, 
-            slug: fm.slug, 
-            date: fm.date, 
-            tags: fm.tags || [], 
-            excerpt, 
-            content 
-          });
-        }
-      } catch (e) {
-        console.error('Failed to parse markdown file', path, e);
-      }
-    });
-  } else {
-    console.log('[Blog] No markdown files found via glob');
-  }
-  
-  // If no markdown files loaded, use fallback posts
-  if (posts.length === 0) {
-    console.log('[Blog] Using fallback posts, count:', FALLBACK_POSTS.length);
-    posts.push(...FALLBACK_POSTS);
-  }
-  
-  posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   cached = posts;
   
   console.log('[Blog] Final posts loaded:', posts.length);
+  console.log('[Blog] Post slugs:', posts.map(p => p.slug));
   
   if (typeof window !== 'undefined') {
     // @ts-ignore
     window.__BLOG_POSTS__ = posts;
-    console.info('[Blog] Final loaded posts:', posts.map(p => p.slug));
-    console.info('[Blog] Posts length:', posts.length);
+    console.info('[Blog] Posts available in window.__BLOG_POSTS__');
   }
   
   return posts;
 }
 
 export function getPostBySlug(slug: string): Post | undefined {
-  const all = loadPosts();
-  const p = all.find(p => p.slug === slug);
-  if (!p) {
-    console.warn(`[Blog] Post not found for slug "${slug}". Available:`, all.map(x => x.slug));
-  }
-  return p;
+  console.log(`[Blog] Looking for post with slug: ${slug}`);
+  const posts = loadPosts();
+  const post = posts.find(p => p.slug === slug);
+  console.log(`[Blog] Found post:`, post ? post.title : 'not found');
+  return post;
 }
