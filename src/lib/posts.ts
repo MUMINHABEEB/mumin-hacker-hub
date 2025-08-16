@@ -16,19 +16,78 @@ export interface Post extends PostFrontmatter {
 let markdownModules: Record<string, string> = {};
 
 try {
-  // @ts-ignore
-  const globA = import.meta.glob("../posts/*.md", { eager: true, query: '?raw', import: 'default' });
-  // @ts-ignore  
-  const globB = import.meta.glob("../posts/**/*.md", { eager: true, query: '?raw', import: 'default' });
+  // Use the correct Vite glob syntax
+  const glob1 = import.meta.glob("../posts/*.md", { eager: true, query: '?raw', import: 'default' });
+  const glob2 = import.meta.glob("../posts/**/*.md", { eager: true, query: '?raw', import: 'default' });
   
-  markdownModules = { ...globA, ...globB } as Record<string, string>;
-  console.log('[Blog] Loaded markdown files:', Object.keys(markdownModules));
+  console.log('[Blog] Glob1 results:', Object.keys(glob1));
+  console.log('[Blog] Glob2 results:', Object.keys(glob2));
+  
+  markdownModules = { ...glob1, ...glob2 } as Record<string, string>;
+  console.log('[Blog] Combined markdown files:', Object.keys(markdownModules));
 } catch (e) {
   console.warn('[Blog] Could not load markdown files via glob:', e);
 }
 
 // Fallback posts for development and demo
-const FALLBACK_POSTS: Post[] = [];
+const FALLBACK_POSTS: Post[] = [
+  {
+    title: "Cybersecurity From My Perspective",
+    slug: "cybersecurity-from-my-perspective",
+    date: "2025-08-16T09:18:00.000Z",
+    tags: ["Cybersecurity", "InfoSec", "CloudSecurity", "PhishingAwareness", "SOCAnalysis"],
+    excerpt: "Learn practical cybersecurity tips, cloud security basics, and how to stay safe online from a tech enthusiast's perspective.",
+    content: `🔐 Cybersecurity From My Perspective
+
+Cybersecurity is something I've been learning and paying attention to because it's not just a tech buzzword anymore — it's part of our daily life. From emails to cloud storage, everything around us is connected, and that also means everything can be attacked.
+
+What I've learned so far is that **cybersecurity isn't just about tools, it's about awareness**. Even if you don't know how to use advanced hacking techniques or complicated defense systems, just being aware of threats already gives you a strong advantage.
+
+🕵️ Types of Threats I've Noticed
+
+1. Phishing – Fake emails or websites that trick you into giving your passwords.
+2. Weak Passwords – People still use \`123456\` or \`password\`. Hackers love that.
+3. Open Ports – If your system has unnecessary open ports, it's like leaving your door unlocked.
+4. Social Engineering – Hackers don't always break in with code, sometimes they just trick people.
+
+☁️ Cybersecurity & the Cloud
+
+Since a lot of services are now cloud-based, I realized that security has shifted. It's not just about protecting your PC anymore, but also about protecting data on platforms like AWS, Google Cloud, or Microsoft Azure. Cloud security is huge because businesses depend on it daily.
+
+🛡️ Basic Practices I Follow
+
+* Never click random links.
+* Use strong, unique passwords.
+* Keep software updated.
+* Double-check websites before entering sensitive info.
+* Learn continuously — because threats keep evolving.
+
+🚀 Why I Care About This
+
+For me, cybersecurity is not only about protecting systems but also about protecting **trust**. If someone loses their money or data, it's not just a technical issue, it's an emotional one too. That's why I'm motivated to learn more — whether it's SOC analysis, penetration testing, or cloud security.
+
+---
+
+👉 This is not a complete cybersecurity guide. It's just what I know and practice right now. As I learn more, I'll share more.`
+  },
+  {
+    title: "Hello World",
+    slug: "hello-world",
+    date: "2025-08-16T10:00:00.000Z",
+    tags: ["intro", "welcome"],
+    excerpt: "A first post to confirm the blog pipeline works with Decap CMS + Vite.",
+    content: `Welcome to your new blog! This **markdown** file lives in \`src/posts/\` and is loaded at build time using \`import.meta.glob\`.
+
+## Features
+
+- Written in Markdown
+- Parsed with gray-matter
+- Rendered with react-markdown
+- Frontmatter drives title, date, tags, slug & excerpt
+
+Update or delete this post once you publish your own content from the CMS at \`/admin\`.`
+  }
+];
 
 let cached: Post[] | null = null;
 
