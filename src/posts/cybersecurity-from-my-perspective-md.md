@@ -1,7 +1,7 @@
 ---
 title: Cybersecurity From My Perspective
 slug: cybersecurity-from-my-perspective
-date: 2025-08-16T09:16:00.000+04:00
+date: 2025-08-16T09:18:00.000+04:00
 tags:
   - "#Cybersecurity  #InfoSec  #CloudSecurity  #PhishingAwareness  #SOCAnalysis  \
     #PenetrationTesting  #CyberAwareness  #DataProtection  #OnlineSafety  #Tech\
