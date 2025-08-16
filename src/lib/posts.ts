@@ -12,95 +12,99 @@ export interface Post extends PostFrontmatter {
   content: string;
 }
 
-// Hardcoded posts as a temporary solution
-const HARDCODED_POSTS: Post[] = [
+// Dynamic posts storage (localStorage + GitHub integration)
+const POSTS_STORAGE_KEY = 'blog-posts';
+
+// Initial demo posts
+const DEMO_POSTS: Post[] = [
   {
-    title: "Hello World",
-    slug: "hello-world", 
+    title: "Welcome to My Blog",
+    slug: "welcome-to-my-blog", 
     date: "2025-08-16T10:00:00.000Z",
     tags: ["intro", "welcome"],
-    excerpt: "A first post to confirm the blog pipeline works with Decap CMS + Vite.",
-    content: `Welcome to your new blog! This **markdown** file lives in \`src/posts/\` and is loaded at build time using \`import.meta.glob\`.
+    excerpt: "Welcome to my cybersecurity blog! Here I'll share insights, tutorials, and my learning journey.",
+    content: `# Welcome to My Cybersecurity Blog!
 
-## Features
+I'm excited to share my journey in cybersecurity with you. This blog will cover:
 
-- Written in Markdown
-- Parsed with gray-matter
-- Rendered with react-markdown
-- Frontmatter drives title, date, tags, slug & excerpt
+## What You'll Find Here
 
-Update or delete this post once you publish your own content from the CMS at \`/admin\`.`
+- **Cybersecurity Insights**: Practical tips and best practices
+- **Learning Journey**: My experiences pursuing BCA in Cloud and Security
+- **Technical Tutorials**: Step-by-step guides for security tools
+- **Industry News**: Analysis of current threats and trends
+
+## About Me
+
+I'm a cybersecurity enthusiast transitioning from accounting to digital defense. Currently pursuing BCA in Cloud and Security while building expertise in:
+
+- SOC Analysis
+- Penetration Testing
+- Cloud Security
+- Python Development
+
+## Get Started
+
+Use the Blog Admin panel to create and edit posts. You can:
+- Write in Markdown
+- Add tags for organization
+- Set publish dates
+- Create rich content with code blocks, links, and more
+
+Let's build something amazing together! 🚀`
   },
   {
-    title: "Test Post - Deployment Check",
-    slug: "test-deployment",
-    date: "2025-08-16T15:00:00.000Z", 
-    tags: ["test", "deployment"],
-    excerpt: "Testing if changes actually deploy to the live website",
-    content: `# This is a Test Post
+    title: "Getting Started with Cybersecurity",
+    slug: "getting-started-cybersecurity",
+    date: "2025-08-16T12:00:00.000Z", 
+    tags: ["beginner", "cybersecurity", "guide"],
+    excerpt: "Essential first steps for anyone interested in cybersecurity career.",
+    content: `# Getting Started with Cybersecurity
 
-If you can see this on the live website, then the deployment is working!
+Breaking into cybersecurity can seem overwhelming, but with the right approach, it's absolutely achievable. Here's your roadmap.
 
-**Current time: August 16, 2025 - 3:00 PM**`
-  },
-  {
-    title: "Cybersecurity From My Perspective",
-    slug: "cybersecurity-from-my-perspective",
-    date: "2025-08-16T09:18:00.000Z",
-    tags: ["Cybersecurity", "InfoSec", "CloudSecurity", "PhishingAwareness", "SOCAnalysis", "PenetrationTesting", "CyberAwareness"],
-    excerpt: "Learn practical cybersecurity tips, cloud security basics, and how to stay safe online from a tech enthusiast's perspective.",
-    content: `# Cybersecurity From My Perspective - UPDATED VERSION
+## 1. Build Strong Foundations
 
-**🚨 TEST UPDATE: This should appear on the live website! 🚨**
+### Technical Skills
+- **Networking**: Understand TCP/IP, DNS, firewalls
+- **Operating Systems**: Get comfortable with Windows and Linux
+- **Programming**: Learn Python, PowerShell, or bash scripting
 
-As a cybersecurity enthusiast transitioning from accounting to the world of digital defense, I've gained unique insights into how businesses and individuals can protect themselves in our increasingly connected world.
+### Soft Skills
+- **Critical Thinking**: Analyze threats and solutions
+- **Communication**: Explain technical concepts clearly
+- **Continuous Learning**: Stay updated with evolving threats
 
-## The Reality of Modern Threats
+## 2. Choose Your Path
 
-Every day, we face sophisticated cyber threats that can compromise our personal data, financial information, and digital identity. From my experience working with financial systems, I've seen firsthand how vulnerable organizations can be without proper security measures.
+### Popular Cybersecurity Roles
+- **SOC Analyst**: Monitor and respond to security incidents
+- **Penetration Tester**: Find vulnerabilities ethically
+- **Security Engineer**: Design and implement security solutions
+- **Incident Responder**: Handle security breaches
 
-## Essential Cybersecurity Practices
+## 3. Get Hands-On Experience
 
-### 1. Strong Password Management
-- Use a unique, complex password for every account
-- Enable two-factor authentication (2FA) wherever possible
-- Consider using a reputable password manager
+### Home Labs
+- Set up virtual machines
+- Practice with security tools
+- Simulate attack scenarios
 
-### 2. Email Security
-- Be cautious of suspicious emails and attachments
-- Verify sender identity before clicking links
-- Use encrypted email services when handling sensitive information
+### Certifications to Consider
+- **CompTIA Security+**: Great starting point
+- **CEH**: For ethical hacking
+- **CISSP**: For advanced professionals
 
-### 3. Cloud Security Basics
-- Regularly review and update privacy settings
-- Use encryption for sensitive data storage
-- Implement proper access controls
+## 4. Stay Connected
 
-## My Learning Journey
+- Join cybersecurity communities
+- Attend conferences and meetups
+- Follow security researchers on Twitter
+- Read security blogs and news
 
-Currently pursuing BCA in Cloud and Security, I'm constantly expanding my knowledge in:
-- **SOC Analysis**: Understanding how to monitor and respond to security incidents
-- **Penetration Testing**: Learning ethical hacking techniques to identify vulnerabilities
-- **Cloud Security**: Mastering secure cloud infrastructure management
-
-## Practical Tips for Everyone
-
-1. **Keep Software Updated**: Regular updates patch security vulnerabilities
-2. **Backup Important Data**: Use the 3-2-1 backup rule (3 copies, 2 different media, 1 offsite)
-3. **Be Social Media Aware**: Limit personal information sharing
-4. **Use Secure Networks**: Avoid public WiFi for sensitive activities
-
-## Conclusion
-
-For me, cybersecurity is not only about protecting systems but also about protecting **trust**. If someone loses their money or data, it's not just a technical issue, it's an emotional one too. That's why I'm motivated to learn more — whether it's SOC analysis, penetration testing, or cloud security.
-
----
-
-👉 This is not a complete cybersecurity guide. It's just what I know and practice right now. As I learn more, I'll share more.`
+Remember: Everyone starts somewhere. Focus on building one skill at a time, and don't be afraid to ask questions!`
   }
 ];
-
-console.log('[Blog] Using hardcoded posts as fallback');
 
 // Cache for posts
 let cached: Post[] | null = null;
@@ -108,24 +112,54 @@ let cached: Post[] | null = null;
 export function loadPosts(): Post[] {
   if (cached) return cached;
   
-  console.log('[Blog] Loading hardcoded posts...');
-  console.log('[Blog] Posts count:', HARDCODED_POSTS.length);
+  console.log('[Blog] Loading posts...');
   
-  // Sort posts by date (newest first)
-  const posts = [...HARDCODED_POSTS].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  // Try to load from localStorage first (user-created posts)
+  try {
+    const storedPosts = localStorage.getItem(POSTS_STORAGE_KEY);
+    if (storedPosts) {
+      const parsed = JSON.parse(storedPosts) as Post[];
+      console.log('[Blog] Loaded from localStorage:', parsed.length, 'posts');
+      
+      // Combine with demo posts, but prioritize stored posts
+      const allPosts = [...parsed];
+      
+      // Add demo posts that don't exist in stored posts
+      DEMO_POSTS.forEach(demoPost => {
+        if (!allPosts.find(p => p.slug === demoPost.slug)) {
+          allPosts.push(demoPost);
+        }
+      });
+      
+      // Sort by date (newest first)
+      const sortedPosts = allPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      cached = sortedPosts;
+      
+      console.log('[Blog] Final posts loaded:', sortedPosts.length);
+      console.log('[Blog] Post slugs:', sortedPosts.map(p => p.slug));
+      
+      if (typeof window !== 'undefined') {
+        // @ts-ignore
+        window.__BLOG_POSTS__ = sortedPosts;
+      }
+      
+      return sortedPosts;
+    }
+  } catch (e) {
+    console.warn('[Blog] Failed to load from localStorage:', e);
+  }
   
-  cached = posts;
-  
-  console.log('[Blog] Final posts loaded:', posts.length);
-  console.log('[Blog] Post slugs:', posts.map(p => p.slug));
+  // Fallback to demo posts
+  console.log('[Blog] Using demo posts as fallback');
+  const sortedPosts = [...DEMO_POSTS].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  cached = sortedPosts;
   
   if (typeof window !== 'undefined') {
     // @ts-ignore
-    window.__BLOG_POSTS__ = posts;
-    console.info('[Blog] Posts available in window.__BLOG_POSTS__');
+    window.__BLOG_POSTS__ = sortedPosts;
   }
   
-  return posts;
+  return sortedPosts;
 }
 
 export function getPostBySlug(slug: string): Post | undefined {
@@ -134,4 +168,74 @@ export function getPostBySlug(slug: string): Post | undefined {
   const post = posts.find(p => p.slug === slug);
   console.log(`[Blog] Found post:`, post ? post.title : 'not found');
   return post;
+}
+
+// Add a new post
+export function addPost(post: Post): void {
+  console.log('[Blog] Adding new post:', post.title);
+  
+  try {
+    const currentPosts = loadPosts();
+    const updatedPosts = [post, ...currentPosts.filter(p => p.slug !== post.slug)];
+    
+    localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(updatedPosts));
+    cached = null; // Clear cache to force reload
+    
+    console.log('[Blog] Post added successfully');
+  } catch (e) {
+    console.error('[Blog] Failed to add post:', e);
+    throw new Error('Failed to save post');
+  }
+}
+
+// Update an existing post
+export function updatePost(slug: string, updatedPost: Post): void {
+  console.log('[Blog] Updating post:', slug);
+  
+  try {
+    const currentPosts = loadPosts();
+    const postIndex = currentPosts.findIndex(p => p.slug === slug);
+    
+    if (postIndex === -1) {
+      throw new Error('Post not found');
+    }
+    
+    currentPosts[postIndex] = updatedPost;
+    localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(currentPosts));
+    cached = null; // Clear cache to force reload
+    
+    console.log('[Blog] Post updated successfully');
+  } catch (e) {
+    console.error('[Blog] Failed to update post:', e);
+    throw new Error('Failed to update post');
+  }
+}
+
+// Delete a post
+export function deletePost(slug: string): void {
+  console.log('[Blog] Deleting post:', slug);
+  
+  try {
+    const currentPosts = loadPosts();
+    const filteredPosts = currentPosts.filter(p => p.slug !== slug);
+    
+    localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(filteredPosts));
+    cached = null; // Clear cache to force reload
+    
+    console.log('[Blog] Post deleted successfully');
+  } catch (e) {
+    console.error('[Blog] Failed to delete post:', e);
+    throw new Error('Failed to delete post');
+  }
+}
+
+// Generate a slug from title
+export function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .trim()
+    .slice(0, 50);
 }
