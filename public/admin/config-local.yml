@@ -1,0 +1,37 @@
+backend:
+  name: test-repo
+
+site_url: "http://localhost:8080"
+logo_url: "/favicon.svg"
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+# For local development - no authentication required
+local_backend: true
+
+collections:
+  - name: "posts"
+    label: "Blog Posts"
+    label_singular: "Post"
+    folder: "src/posts"
+    create: true
+    slug: "{{slug}}"
+    path: "{{slug}}.md"
+    extension: "md"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Tags", name: "tags", widget: "list", required: false }
+      - { label: "Excerpt", name: "excerpt", widget: "text", required: false }
+      - { label: "Featured Image", name: "image", widget: "image", required: false }
+      - { label: "Body", name: "body", widget: "markdown" }
+
+  - name: "pages"
+    label: "Pages"
+    files:
+      - label: "About"
+        name: "about"
+        file: "src/content/about.md"
+        fields:
+          - { label: "Title", name: "title", widget: "string" }
+          - { label: "Body", name: "body", widget: "markdown" }

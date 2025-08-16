@@ -1,9 +1,9 @@
 backend:
   name: git-gateway
-  branch: main
+  branch: master
 
-site_url: "https://YOUR_NETLIFY_SITE_URL"
-logo_url: "/favicon.ico"
+site_url: "https://muminhabeeb.info"
+logo_url: "/favicon.svg"
 media_folder: "public/uploads"
 public_folder: "/uploads"
 

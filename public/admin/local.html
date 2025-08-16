@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Content Manager - Local Dev</title>
+  </head>
+  <body>
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <script>
+      // Initialize Decap CMS with local configuration
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        // Local development - use test backend
+        CMS.init({
+          config: {
+            backend: {
+              name: 'test-repo'
+            },
+            media_folder: 'public/uploads',
+            public_folder: '/uploads',
+            collections: [
+              {
+                name: 'posts',
+                label: 'Blog Posts',
+                folder: 'src/posts',
+                create: true,
+                slug: '{{slug}}',
+                fields: [
+                  { label: 'Title', name: 'title', widget: 'string' },
+                  { label: 'Date', name: 'date', widget: 'datetime' },
+                  { label: 'Tags', name: 'tags', widget: 'list', required: false },
+                  { label: 'Excerpt', name: 'excerpt', widget: 'text', required: false },
+                  { label: 'Body', name: 'body', widget: 'markdown' }
+                ]
+              }
+            ]
+          }
+        });
+      } else {
+        // Production - use regular config
+        CMS.init();
+      }
+    </script>
+  </body>
+</html>
