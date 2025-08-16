@@ -264,10 +264,15 @@ ${post.content}`;
     setMessage('🗑️ Deleting post from GitHub...');
 
     try {
+      // Use the original filename if available, otherwise construct from slug
       const filename = post.filename || `${post.slug}.md`;
+      
+      console.log(`[Delete] Attempting to delete file: ${filename}`);
+      console.log(`[Delete] Post object:`, post);
       
       // First, get the current file to get its SHA
       const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${POSTS_PATH}/${filename}`;
+      console.log(`[Delete] GET URL:`, getUrl);
       
       const getResponse = await fetch(getUrl, {
         headers: {
@@ -277,10 +282,21 @@ ${post.content}`;
       });
 
       if (!getResponse.ok) {
-        throw new Error(`Failed to get file info: ${getResponse.status}`);
+        const errorText = await getResponse.text();
+        console.error(`[Delete] GET failed:`, getResponse.status, errorText);
+        
+        // If file not found, it might already be deleted
+        if (getResponse.status === 404) {
+          setMessage('⚠️ File not found - it may have already been deleted. Refreshing...');
+          await loadPostsFromGitHub(githubToken);
+          return;
+        }
+        
+        throw new Error(`Failed to get file info: ${getResponse.status} - ${errorText}`);
       }
 
       const fileInfo = await getResponse.json();
+      console.log(`[Delete] File info retrieved:`, fileInfo.sha);
       
       // Now delete with the correct SHA
       const deleteUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${POSTS_PATH}/${filename}`;
