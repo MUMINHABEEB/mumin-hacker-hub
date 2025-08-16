@@ -27,6 +27,7 @@ const BlogAdmin: React.FC = () => {
   const [loginError, setLoginError] = useState('');
   const [posts, setPosts] = useState<Post[]>([]);
   const [isCreating, setIsCreating] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [editingPost, setEditingPost] = useState<string | null>(null);
   const [newPost, setNewPost] = useState<NewPost>({
     title: '',
@@ -130,6 +131,29 @@ ${post.content}`;
       content: ''
     });
     setIsCreating(false);
+    setIsEditing(false);
+    setEditingPost(null);
+  };
+
+  const startEditing = (post: Post) => {
+    setNewPost({
+      title: post.title,
+      slug: post.slug,
+      date: post.date.split('T')[0], // Convert to date format
+      tags: post.tags,
+      excerpt: post.excerpt || '',
+      content: post.content
+    });
+    setEditingPost(post.slug);
+    setIsEditing(true);
+    setIsCreating(false);
+  };
+
+  const startCreating = () => {
+    resetForm();
+    setIsCreating(true);
+    setIsEditing(false);
+    setEditingPost(null);
   };
 
   // Login screen
@@ -204,9 +228,9 @@ ${post.content}`;
           </div>
           <div className="flex gap-3">
             <Button 
-              onClick={() => setIsCreating(true)}
+              onClick={startCreating}
               className="bg-cyan-600 hover:bg-cyan-700"
-              disabled={isCreating}
+              disabled={isCreating || isEditing}
             >
               <Plus className="w-4 h-4 mr-2" />
               New Post
@@ -221,11 +245,13 @@ ${post.content}`;
           </div>
         </div>
 
-        {isCreating && (
+        {(isCreating || isEditing) && (
           <Card className="bg-slate-900 border-slate-700 mb-8">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-cyan-400">Create New Post</CardTitle>
+                <CardTitle className="text-cyan-400">
+                  {isEditing ? `Edit Post: ${editingPost}` : 'Create New Post'}
+                </CardTitle>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -236,7 +262,10 @@ ${post.content}`;
                 </Button>
               </div>
               <CardDescription>
-                Fill in the details below and download the markdown file to add to your src/posts folder
+                {isEditing 
+                  ? 'Edit the post details below and download the updated markdown file' 
+                  : 'Fill in the details below and download the markdown file to add to your src/posts folder'
+                }
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -323,7 +352,7 @@ ${post.content}`;
                   disabled={!newPost.title || !newPost.slug || !newPost.content}
                 >
                   <Save className="w-4 h-4 mr-2" />
-                  Download Markdown File
+                  {isEditing ? 'Download Updated File' : 'Download Markdown File'}
                 </Button>
                 <Button
                   variant="outline"
@@ -336,8 +365,15 @@ ${post.content}`;
 
               {newPost.title && newPost.slug && (
                 <div className="mt-4 p-4 bg-slate-800 rounded-lg">
-                  <p className="text-sm text-slate-400 mb-2">Preview filename:</p>
+                  <p className="text-sm text-slate-400 mb-2">
+                    {isEditing ? 'Updated filename:' : 'Preview filename:'}
+                  </p>
                   <code className="text-cyan-400">{newPost.slug}.md</code>
+                  {isEditing && (
+                    <p className="text-xs text-yellow-400 mt-2">
+                      💡 After downloading, replace the existing file in src/posts/ and push to GitHub
+                    </p>
+                  )}
                 </div>
               )}
             </CardContent>
@@ -367,7 +403,9 @@ ${post.content}`;
                       <Button
                         variant="ghost"
                         size="sm"
+                        onClick={() => startEditing(post)}
                         className="text-slate-400 hover:text-cyan-400"
+                        disabled={isCreating || isEditing}
                       >
                         <Edit className="w-4 h-4" />
                       </Button>
