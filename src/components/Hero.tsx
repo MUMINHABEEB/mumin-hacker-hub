@@ -49,7 +49,7 @@ const Hero = () => {
             </p>
 
             <div className="text-xs text-muted-foreground/60 font-mono">
-              🚀 Last Deploy: {new Date().toLocaleString()}
+              🚀 Last Deploy: {new Date().toLocaleString()} | Branch: main ✅
             </div>
 
             {/* Tech badges */}
