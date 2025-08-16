@@ -1,6 +1,7 @@
 backend:
   name: git-gateway
   branch: master
+  squash_merges: true
 
 site_url: "https://muminhabeeb.info"
 logo_url: "/favicon.svg"
