@@ -4,7 +4,9 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Badge } from './ui/badge';
-import { Trash2, Edit, Plus, Save, X, RefreshCw, Github, Key } from 'lucide-react';
+import { Trash2, Edit, Plus, Save, X, RefreshCw, Github, Key, ExternalLink, LogOut } from 'lucide-react';
+import { clearPostsCache } from '../lib/posts';
+import AdminLogin from './AdminLogin';
 
 interface Post {
   title: string;
@@ -31,30 +33,76 @@ const GitHubBlogAdmin: React.FC = () => {
     tags: '',
     excerpt: ''
   });
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const GITHUB_OWNER = 'MUMINHABEEB';
   const GITHUB_REPO = 'mumin-hacker-hub';
   const POSTS_PATH = 'src/posts';
 
+  // Check authentication and load token
   useEffect(() => {
-    // Check for saved token
+    const checkAuth = () => {
+      const loggedIn = localStorage.getItem('admin-logged-in');
+      const loginTime = localStorage.getItem('admin-login-time');
+      
+      if (loggedIn && loginTime) {
+        const timeDiff = Date.now() - parseInt(loginTime);
+        const hoursDiff = timeDiff / (1000 * 60 * 60);
+        
+        // Session expires after 24 hours
+        if (hoursDiff < 24) {
+          setIsLoggedIn(true);
+          // Load saved GitHub token
+          const savedToken = localStorage.getItem('github-token');
+          if (savedToken) {
+            setGithubToken(savedToken);
+            setIsTokenSet(true);
+            loadPostsFromGitHub(savedToken);
+          }
+        } else {
+          // Session expired
+          localStorage.removeItem('admin-logged-in');
+          localStorage.removeItem('admin-login-time');
+        }
+      }
+    };
+    
+    checkAuth();
+  }, []);
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    // Load saved GitHub token after login
     const savedToken = localStorage.getItem('github-token');
     if (savedToken) {
       setGithubToken(savedToken);
       setIsTokenSet(true);
       loadPostsFromGitHub(savedToken);
     }
-  }, []);
+  };
 
-  const saveToken = () => {
-    if (!githubToken.trim()) {
-      setMessage('❌ Please enter a valid GitHub token');
-      return;
+  const handleLogout = () => {
+    localStorage.removeItem('admin-logged-in');
+    localStorage.removeItem('admin-login-time');
+    setIsLoggedIn(false);
+  };
+
+  // Show login screen if not authenticated
+  if (!isLoggedIn) {
+    return <AdminLogin onLogin={handleLogin} />;
+  }
+
+  // Auto-save token when it changes
+  const handleTokenChange = (token: string) => {
+    setGithubToken(token);
+    if (token.trim()) {
+      localStorage.setItem('github-token', token);
+      setIsTokenSet(true);
+      setMessage('✅ GitHub token saved automatically!');
+    } else {
+      localStorage.removeItem('github-token');
+      setIsTokenSet(false);
     }
-    localStorage.setItem('github-token', githubToken);
-    setIsTokenSet(true);
-    setMessage('✅ GitHub token saved successfully!');
-    loadPostsFromGitHub(githubToken);
   };
 
   const generateSlug = (title: string): string => {
@@ -239,6 +287,9 @@ ${post.content}`;
 
       setMessage(`✅ Post ${isEdit ? 'updated' : 'created'} successfully on GitHub! 🚀 Your site will update in 2-3 minutes.`);
       
+      // Clear the unified cache so blog page gets fresh data
+      clearPostsCache();
+      
       // Reload posts to get the latest state
       await loadPostsFromGitHub(githubToken);
       
@@ -321,6 +372,10 @@ ${post.content}`;
       }
 
       setMessage('✅ Post deleted successfully from GitHub! 🚀 Your site will update in 2-3 minutes.');
+      
+      // Clear the unified cache so blog page gets fresh data
+      clearPostsCache();
+      
       await loadPostsFromGitHub(githubToken);
 
     } catch (error) {
@@ -388,18 +443,26 @@ ${post.content}`;
                   type="password"
                   placeholder="GitHub Personal Access Token"
                   value={githubToken}
-                  onChange={(e) => setGithubToken(e.target.value)}
+                  onChange={(e) => handleTokenChange(e.target.value)}
                   className="bg-black border-green-400 text-green-400"
                 />
                 <p className="text-sm text-gray-400">
                   Need a token? Go to GitHub Settings → Developer settings → Personal access tokens → Generate new token.
                   Required permissions: repo (full control of private repositories)
                 </p>
+                <p className="text-sm text-cyan-400">
+                  💾 Token is automatically saved and will be remembered for future sessions
+                </p>
               </div>
-              <Button onClick={saveToken} className="bg-green-600 hover:bg-green-700">
-                <Github className="w-4 h-4 mr-2" />
-                Save Token & Load Posts
-              </Button>
+              {isTokenSet && (
+                <Button 
+                  onClick={() => loadPostsFromGitHub(githubToken)} 
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  <Github className="w-4 h-4 mr-2" />
+                  Load Posts from GitHub
+                </Button>
+              )}
               {message && (
                 <p className={`text-sm ${message.includes('❌') ? 'text-red-400' : 'text-green-400'}`}>
                   {message}
@@ -415,11 +478,21 @@ ${post.content}`;
   return (
     <div className="min-h-screen bg-black text-green-400 p-4">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 relative">
           <h1 className="text-4xl font-mono mb-4 text-cyan-400">
             🚀 GITHUB BLOG ADMIN
           </h1>
           <p className="text-green-300">Managing posts in your GitHub repository</p>
+          
+          {/* Logout Button */}
+          <Button
+            onClick={handleLogout}
+            variant="outline"
+            className="absolute top-0 right-0 border-red-400 text-red-400 hover:bg-red-400 hover:text-black"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Logout
+          </Button>
         </div>
 
         {/* Status Message */}
@@ -432,7 +505,7 @@ ${post.content}`;
         )}
 
         {/* Action Buttons */}
-        <div className="flex gap-4 mb-6">
+        <div className="flex gap-4 mb-6 flex-wrap">
           <Button 
             onClick={() => setIsCreating(true)}
             className="bg-green-600 hover:bg-green-700"
@@ -449,6 +522,17 @@ ${post.content}`;
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Refresh from GitHub
+          </Button>
+          <Button 
+            onClick={() => {
+              clearPostsCache();
+              window.open('/blog', '_blank');
+            }}
+            variant="outline"
+            className="border-purple-400 text-purple-400"
+          >
+            <ExternalLink className="w-4 h-4 mr-2" />
+            View Blog
           </Button>
         </div>
 

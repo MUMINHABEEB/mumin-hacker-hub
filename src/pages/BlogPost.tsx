@@ -1,15 +1,64 @@
 import { useParams, Link } from "react-router-dom";
-import { getPostBySlug } from "@/lib/posts";
+import { getPostBySlug, type Post } from "@/lib/posts";
 import ReactMarkdown from "react-markdown";
 import { format } from "date-fns";
-import { ChevronRight, Home, ArrowLeft } from "lucide-react";
+import { ChevronRight, Home, ArrowLeft, RefreshCw } from "lucide-react";
 import NotFound from "./NotFound";
 import BlogLayout from "@/components/BlogLayout";
+import { useState, useEffect } from "react";
 
 const BlogPost = () => {
   const { slug } = useParams();
-  const post = slug ? getPostBySlug(slug) : undefined;
-  if (!post) return <NotFound />;
+  const [post, setPost] = useState<Post | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadPost = async () => {
+      if (!slug) {
+        setError('No slug provided');
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const foundPost = await getPostBySlug(slug);
+        if (foundPost) {
+          setPost(foundPost);
+        } else {
+          setError('Post not found');
+        }
+      } catch (err) {
+        setError('Failed to load post');
+        console.error('Error loading post:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPost();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <BlogLayout>
+        <div className="container py-12">
+          <div className="text-center py-8">
+            <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading post...</p>
+          </div>
+        </div>
+      </BlogLayout>
+    );
+  }
+
+  if (error || !post) {
+    return <NotFound />;
+  }
+
   return (
     <BlogLayout>
       <div className="container py-12">
