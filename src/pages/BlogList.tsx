@@ -1,11 +1,22 @@
 import { Link } from "react-router-dom";
 import { loadPosts } from "@/lib/posts";
 import { format } from "date-fns";
+import { ChevronRight, Home } from "lucide-react";
 
 const BlogList = () => {
   const posts = loadPosts();
   return (
     <div className="container py-12">
+      {/* Breadcrumb Navigation */}
+      <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6">
+        <Link to="/" className="flex items-center hover:text-primary transition-colors">
+          <Home className="h-4 w-4 mr-1" />
+          Home
+        </Link>
+        <ChevronRight className="h-4 w-4" />
+        <span className="text-foreground">Blog</span>
+      </nav>
+      
       <h1 className="text-4xl font-bold mb-8">Blog</h1>
       {posts.length === 0 && (
         <p className="text-muted-foreground">No posts yet. Create one in the CMS at <code>/admin</code>.</p>
