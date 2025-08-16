@@ -157,10 +157,6 @@ const loadPostsFromStaticImports = async (): Promise<Post[]> => {
         filename: 'hello-world.md'
       },
       { 
-        import: () => import('/src/posts/test-deployment-1.md?raw'),
-        filename: 'test-deployment-1.md'
-      },
-      { 
         import: () => import('/src/posts/test-deployment.md?raw'),
         filename: 'test-deployment.md'
       },
