@@ -8,6 +8,8 @@ import NotFound from "./pages/NotFound";
 import BlogList from "./pages/BlogList";
 import BlogPost from "./pages/BlogPost";
 import BlogAdmin from "./components/BlogAdmin";
+import SimpleBlogAdmin from "./components/SimpleBlogAdmin";
+import GitHubBlogAdmin from "./components/GitHubBlogAdmin";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +24,8 @@ const App = () => (
           <Route path="/blog" element={<BlogList />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/blog-admin" element={<BlogAdmin />} />
+          <Route path="/simple-admin" element={<SimpleBlogAdmin />} />
+          <Route path="/github-admin" element={<GitHubBlogAdmin />} />
           <Route path="/admin" element={<div className='container py-20'><h1 className='text-2xl font-semibold'>CMS Loading...</h1><p>Visit <code>/admin/</code> (with trailing slash) to load the Decap CMS UI.</p></div>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
