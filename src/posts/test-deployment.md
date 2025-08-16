@@ -1,7 +1,7 @@
 ---
 title: "Test Post - Deployment Check"
 slug: "test-deployment"
-date: "2025-08-16T15:00:00.000Z"
+date: "2025-08-16"
 tags: ["test", "deployment"]
 excerpt: "Testing if changes actually deploy to the live website"
 ---
@@ -10,4 +10,3 @@ excerpt: "Testing if changes actually deploy to the live website"
 
 If you can see this on the live website, then the deployment is working!
 
-**Current time: August 16, 2025 - 3:00 PM**
