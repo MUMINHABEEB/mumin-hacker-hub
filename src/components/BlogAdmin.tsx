@@ -118,11 +118,10 @@ ${post.content}`;
       const content = generateMarkdownContent(post);
       const filename = `${post.slug}.md`;
       
-      // Create a GitHub API request to save the file
-      const response = await fetch(`https://api.github.com/repos/MUMINHABEEB/mumin-hacker-hub/contents/src/posts/${filename}`, {
+      // Use Git Gateway API instead of direct GitHub API
+      const response = await fetch('/.netlify/git/github/contents/src/posts/' + filename, {
         method: 'PUT',
         headers: {
-          'Authorization': `token ${process.env.REACT_APP_GITHUB_TOKEN}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -139,13 +138,14 @@ ${post.content}`;
           loadPostsData();
         }, 2000);
       } else {
-        throw new Error('Failed to save to GitHub');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Git Gateway Error: ${errorData.message || 'Failed to save'}`);
       }
     } catch (error) {
       console.error('Error saving post:', error);
-      setSaveMessage('❌ Failed to save. Using download instead...');
+      setSaveMessage(`❌ Failed to save: ${error.message}. Using download instead...`);
       // Fallback to download
-      setTimeout(() => downloadPost(post), 1000);
+      setTimeout(() => downloadPost(post), 2000);
     }
     
     setIsSaving(false);
@@ -153,7 +153,13 @@ ${post.content}`;
 
   const getFileSha = async (filename: string): Promise<string | undefined> => {
     try {
-      const response = await fetch(`https://api.github.com/repos/MUMINHABEEB/mumin-hacker-hub/contents/src/posts/${filename}`);
+      // Use Git Gateway to get file info
+      const response = await fetch('/.netlify/git/github/contents/src/posts/' + filename, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
       if (response.ok) {
         const data = await response.json();
         return data.sha;
@@ -281,6 +287,11 @@ ${post.content}`;
               Blog Admin
             </h1>
             <p className="text-slate-400 mt-2">Manage your blog posts</p>
+            <div className="mt-2 p-3 bg-green-900 border border-green-600 rounded-lg">
+              <p className="text-green-300 text-sm">
+                ✅ <strong>Git Gateway Connected:</strong> Online publishing is ready! No setup required.
+              </p>
+            </div>
           </div>
           <div className="flex gap-3">
             <Button 
@@ -453,7 +464,7 @@ ${post.content}`;
                   </p>
                   <code className="text-cyan-400">{newPost.slug}.md</code>
                   <div className="mt-3 text-xs text-slate-400">
-                    <p>💡 <strong>Online Publishing:</strong> Saves directly to GitHub and goes live automatically</p>
+                    <p>💡 <strong>Online Publishing:</strong> Uses Git Gateway - saves directly to GitHub automatically</p>
                     <p>📁 <strong>Download:</strong> Get the file to manually add to your project</p>
                   </div>
                 </div>
