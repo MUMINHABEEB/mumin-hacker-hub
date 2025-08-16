@@ -1,5 +1,14 @@
 import matter from "gray-matter";
 
+// Import markdown files directly as raw strings
+import cybersecurityPerspectiveRaw from '/src/posts/cybersecurity-from-my-perspective.md?raw';
+import helloWorldRaw from '/src/posts/hello-world.md?raw';
+import testDeployment1Raw from '/src/posts/test-deployment-1.md?raw';
+import testDeploymentRaw from '/src/posts/test-deployment.md?raw';
+import testPost23Raw from '/src/posts/test-post-23.md?raw';
+import testPostDeploymentCheckRaw from '/src/posts/test-post-deployment-check.md?raw';
+import testkaroRaw from '/src/posts/testkaro.md?raw';
+
 export interface PostFrontmatter {
   title: string;
   slug: string;
@@ -12,26 +21,35 @@ export interface Post extends PostFrontmatter {
   content: string;
 }
 
-// Import all markdown files dynamically
+// Import all markdown files using explicit imports
 const importMarkdownFiles = () => {
   const posts: Post[] = [];
   
-  // Dynamically import all .md files from the posts directory
-  const modules = import.meta.glob('/src/posts/*.md', { 
-    query: '?raw',
-    import: 'default',
-    eager: true 
-  });
+  // Define all the raw imports with their filenames
+  const markdownFiles = [
+    { content: cybersecurityPerspectiveRaw, filename: 'cybersecurity-from-my-perspective.md' },
+    { content: helloWorldRaw, filename: 'hello-world.md' },
+    { content: testDeployment1Raw, filename: 'test-deployment-1.md' },
+    { content: testDeploymentRaw, filename: 'test-deployment.md' },
+    { content: testPost23Raw, filename: 'test-post-23.md' },
+    { content: testPostDeploymentCheckRaw, filename: 'test-post-deployment-check.md' },
+    { content: testkaroRaw, filename: 'testkaro.md' }
+  ];
 
-  for (const path in modules) {
-    const rawContent = modules[path] as string;
-    
+  console.log(`[Blog] Processing ${markdownFiles.length} markdown files`);
+
+  for (const file of markdownFiles) {
     try {
+      if (!file.content || typeof file.content !== 'string') {
+        console.warn(`[Blog] Invalid content for ${file.filename}:`, typeof file.content);
+        continue;
+      }
+
       // Parse frontmatter and content
-      const { data: frontmatter, content } = matter(rawContent);
+      const { data: frontmatter, content } = matter(file.content);
       
       // Extract filename for slug if not provided
-      const filename = path.split('/').pop()?.replace('.md', '') || '';
+      const filename = file.filename.replace('.md', '');
       
       const post: Post = {
         title: frontmatter.title || filename.replace(/-/g, ' '),
@@ -42,12 +60,14 @@ const importMarkdownFiles = () => {
         content: content.trim()
       };
       
+      console.log(`[Blog] Parsed post:`, post.title);
       posts.push(post);
     } catch (error) {
-      console.error(`Error parsing ${path}:`, error);
+      console.error(`Error parsing ${file.filename}:`, error);
     }
   }
 
+  console.log(`[Blog] Total posts imported: ${posts.length}`);
   return posts;
 };
 
