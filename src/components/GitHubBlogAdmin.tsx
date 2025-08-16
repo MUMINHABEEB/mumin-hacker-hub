@@ -34,6 +34,7 @@ const GitHubBlogAdmin: React.FC = () => {
     excerpt: ''
   });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
 
   const GITHUB_OWNER = 'MUMINHABEEB';
   const GITHUB_REPO = 'mumin-hacker-hub';
@@ -60,11 +61,18 @@ const GitHubBlogAdmin: React.FC = () => {
             loadPostsFromGitHub(savedToken);
           }
         } else {
-          // Session expired
+          // Session expired - clear everything and set logged out
           localStorage.removeItem('admin-logged-in');
           localStorage.removeItem('admin-login-time');
+          setIsLoggedIn(false);
         }
+      } else {
+        // No valid session - ensure logged out state
+        setIsLoggedIn(false);
       }
+      
+      // Authentication check complete
+      setIsAuthChecking(false);
     };
     
     checkAuth();
@@ -72,6 +80,7 @@ const GitHubBlogAdmin: React.FC = () => {
 
   const handleLogin = () => {
     setIsLoggedIn(true);
+    setIsAuthChecking(false);
     // Load saved GitHub token after login
     const savedToken = localStorage.getItem('github-token');
     if (savedToken) {
@@ -86,6 +95,18 @@ const GitHubBlogAdmin: React.FC = () => {
     localStorage.removeItem('admin-login-time');
     setIsLoggedIn(false);
   };
+
+  // Show loading screen while checking authentication
+  if (isAuthChecking) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
+          <p className="text-cyan-400 text-lg">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Show login screen if not authenticated
   if (!isLoggedIn) {
