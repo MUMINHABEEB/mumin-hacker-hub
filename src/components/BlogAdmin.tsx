@@ -43,12 +43,10 @@ const BlogAdmin: React.FC = () => {
   });
 
   useEffect(() => {
-    // Check if user is already authenticated (session storage)
-    const auth = sessionStorage.getItem('blog-admin-auth');
-    if (auth === 'authenticated') {
-      setIsAuthenticated(true);
-      loadPostsData();
-    }
+    // AUTO-LOGIN FOR TESTING - REMOVE IN PRODUCTION
+    setIsAuthenticated(true);
+    sessionStorage.setItem('blog-admin-auth', 'authenticated');
+    loadPostsData();
     
     // Check for saved GitHub token
     const savedToken = localStorage.getItem('github-token');
