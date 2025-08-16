@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import profileImage from '@/assets/mumin-profile.jpg';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,19 +17,6 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Prevent body scroll when mobile menu is open
-  useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isMenuOpen]);
-
   const navItems = [
     { href: '#home', label: 'Home' },
     { href: '#about', label: 'About' },
@@ -41,10 +27,8 @@ const Header = () => {
   ];
 
   const scrollToSection = (href: string) => {
-    // If we're not on the home page, navigate to home first
     if (location.pathname !== '/') {
       navigate('/');
-      // Wait for navigation then scroll
       setTimeout(() => {
         const element = document.querySelector(href);
         if (element) {
@@ -52,13 +36,11 @@ const Header = () => {
         }
       }, 100);
     } else {
-      // We're on home page, just scroll
       const element = document.querySelector(href);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       }
     }
-    setIsMenuOpen(false);
   };
 
   return (
@@ -106,8 +88,9 @@ const Header = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden text-foreground drop-shadow-lg"
+            className="md:hidden text-foreground drop-shadow-lg p-2 rounded-lg hover:bg-muted/20 transition-all duration-200"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -115,87 +98,41 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden fixed inset-0 top-16 bg-background/95 backdrop-blur-lg border-t border-border/50 z-40">
-            <nav className="container mx-auto px-4 py-8 h-full flex flex-col relative">
-              {/* Close Button */}
-              <button
-                onClick={() => setIsMenuOpen(false)}
-                className="absolute top-4 right-4 text-muted-foreground hover:text-primary transition-colors"
-              >
-                <X size={24} />
-              </button>
-
-              {/* Profile Section */}
-              <div className="flex flex-col items-center mb-8">
-                <div className="relative mb-4">
-                  <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary/30 bg-gradient-to-br from-primary/20 to-accent/20">
-                    <img 
-                      src={profileImage} 
-                      alt="Mumin Habeeb Profile"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        // Fallback to a gradient background if image fails to load
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        target.parentElement!.innerHTML = '<div class="w-full h-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-2xl font-bold text-background">MH</div>';
+          <div className="fixed inset-0 z-50 md:hidden bg-slate-900">
+            <div className="flex flex-col h-full">
+              {/* Mobile Header */}
+              <div className="flex justify-between items-center p-6 border-b border-slate-700">
+                <span className="text-xl font-bold text-primary">&lt;MH/&gt;</span>
+                <button onClick={() => setIsMenuOpen(false)} className="p-2 text-white hover:text-primary">
+                  <X size={24} />
+                </button>
+              </div>
+              
+              {/* Mobile Menu Items */}
+              <div className="flex-1 p-6 bg-slate-900">
+                <nav className="space-y-6">
+                  {navItems.map((item) => (
+                    <button
+                      key={item.href}
+                      onClick={() => {
+                        scrollToSection(item.href);
+                        setIsMenuOpen(false);
                       }}
-                    />
-                  </div>
-                  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-background"></div>
-                </div>
-                
-                <div className="text-center space-y-2">
-                  <div className="font-mono text-sm text-muted-foreground">
-                    <span className="text-primary">$</span> whoami
-                  </div>
-                  <h2 className="text-xl font-semibold text-foreground">Hi, I'm</h2>
-                  <div className="space-y-1">
-                    <div className="text-primary font-cyber text-lg">&gt;</div>
-                    <h3 className="text-lg font-semibold text-foreground">Cybersecurity Enthusiast</h3>
-                    <h4 className="text-base text-muted-foreground">Researcher</h4>
-                  </div>
-                  <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
-                    Passionate about exploring the world of cybersecurity, penetration testing, and cloud security. Currently pursuing BCA in Cloud and Security while building expertise in ethical hacking and digital defense.
-                  </p>
-                </div>
-              </div>
-
-              {/* Navigation Links */}
-              <div className="flex-1 flex flex-col justify-center space-y-6">
-                {navItems.map((item) => (
-                  <button
-                    key={item.href}
-                    onClick={() => scrollToSection(item.href)}
-                    className="text-left text-lg text-muted-foreground hover:text-primary transition-all duration-300 font-mono group relative py-2"
-                  >
-                    <span className="group-hover:translate-x-2 transition-transform duration-300 inline-block">
+                      className="block w-full text-left text-xl py-3 text-white hover:text-primary transition-colors"
+                    >
                       {item.label}
-                    </span>
-                    <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-gradient-primary transition-all duration-300 group-hover:w-full"></span>
-                  </button>
-                ))}
-                <Link 
-                  to="/blog" 
-                  onClick={() => setIsMenuOpen(false)}
-                  className="text-left text-lg text-muted-foreground hover:text-primary transition-all duration-300 font-mono group relative py-2"
-                >
-                  <span className="group-hover:translate-x-2 transition-transform duration-300 inline-block">
+                    </button>
+                  ))}
+                  <Link 
+                    to="/blog" 
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block w-full text-left text-xl py-3 text-white hover:text-primary transition-colors"
+                  >
                     Blog
-                  </span>
-                  <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-gradient-primary transition-all duration-300 group-hover:w-full"></span>
-                </Link>
+                  </Link>
+                </nav>
               </div>
-
-              {/* CTA Button */}
-              <div className="mt-8">
-                <Button 
-                  onClick={() => scrollToSection('#contact')}
-                  className="w-full bg-gradient-primary hover:glow-green transition-all duration-300 font-mono text-lg py-3"
-                >
-                  Get In Touch
-                </Button>
-              </div>
-            </nav>
+            </div>
           </div>
         )}
       </div>

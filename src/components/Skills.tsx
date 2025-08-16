@@ -34,12 +34,12 @@ const Skills = () => {
   ];
 
   const techStack = [
-    { name: 'Python', level: 75, color: 'primary' },
-    { name: 'Linux', level: 70, color: 'secondary' },
-    { name: 'Networking', level: 65, color: 'accent' },
-    { name: 'Web Security', level: 60, color: 'primary' },
-    { name: 'Cloud Platforms', level: 55, color: 'secondary' },
-    { name: 'SIEM Tools', level: 50, color: 'accent' }
+    { name: 'Python', level: 75, color: 'primary', expertise: 'Expert' },
+    { name: 'Linux', level: 70, color: 'secondary', expertise: 'Advanced' },
+    { name: 'Networking', level: 65, color: 'accent', expertise: 'Advanced' },
+    { name: 'Web Security', level: 60, color: 'primary', expertise: 'Medium' },
+    { name: 'Cloud Platforms', level: 55, color: 'secondary', expertise: 'Medium' },
+    { name: 'SOC Analyst', level: 50, color: 'accent', expertise: 'Medium' }
   ];
 
   const certifications = [
@@ -106,7 +106,9 @@ const Skills = () => {
                 <div key={index} className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="font-mono text-foreground text-sm sm:text-base">{tech.name}</span>
-                    <span className={`font-mono text-xs sm:text-sm text-${tech.color}`}>{tech.level}%</span>
+                    <span className={`font-mono text-xs sm:text-sm text-${tech.color} px-2 py-1 bg-${tech.color}/10 rounded-md border border-${tech.color}/20`}>
+                      {tech.expertise}
+                    </span>
                   </div>
                   <div className="w-full bg-cyber-gray rounded-full h-2">
                     <div 

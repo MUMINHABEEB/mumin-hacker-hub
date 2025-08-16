@@ -4,13 +4,15 @@ import ReactMarkdown from "react-markdown";
 import { format } from "date-fns";
 import { ChevronRight, Home, ArrowLeft } from "lucide-react";
 import NotFound from "./NotFound";
+import BlogLayout from "@/components/BlogLayout";
 
 const BlogPost = () => {
   const { slug } = useParams();
   const post = slug ? getPostBySlug(slug) : undefined;
   if (!post) return <NotFound />;
   return (
-    <div className="container py-12">
+    <BlogLayout>
+      <div className="container py-12">
       {/* Breadcrumb Navigation */}
       <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6">
         <Link to="/" className="flex items-center hover:text-primary transition-colors">
@@ -47,6 +49,7 @@ const BlogPost = () => {
         <ReactMarkdown>{post.content}</ReactMarkdown>
       </article>
     </div>
+    </BlogLayout>
   );
 };
 
