@@ -4,8 +4,8 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Badge } from './ui/badge';
-import { Trash2, Edit, Plus, Save, X, Lock, Upload, Download, Globe } from 'lucide-react';
-import { loadPosts, type Post } from '../lib/posts';
+import { Trash2, Edit, Plus, Save, X, Lock, Upload, Download, Globe, RefreshCw } from 'lucide-react';
+import { loadPosts, addPost, updatePost, deletePost, generateSlug, type Post } from '../lib/posts';
 
 interface NewPost {
   title: string;
@@ -147,6 +147,60 @@ excerpt: "${post.excerpt}"
 ---
 
 ${post.content}`;
+  };
+
+  // Save post locally (immediate) and optionally to GitHub
+  const savePost = async (post: NewPost) => {
+    setIsSaving(true);
+    setSaveMessage('');
+    
+    try {
+      // First, save locally for immediate effect
+      const postData: Post = {
+        title: post.title,
+        slug: post.slug,
+        date: post.date ? new Date(post.date).toISOString() : new Date().toISOString(),
+        tags: post.tags,
+        excerpt: post.excerpt,
+        content: post.content
+      };
+
+      if (isEditing && editingPost) {
+        updatePost(editingPost, postData);
+        setSaveMessage('✅ Post updated successfully!');
+      } else {
+        addPost(postData);
+        setSaveMessage('✅ Post created successfully!');
+      }
+      
+      // Refresh the posts list
+      loadPostsData();
+      
+      // Reset form
+      resetForm();
+      setIsCreating(false);
+      setIsEditing(false);
+      setEditingPost(null);
+      
+      // Also try to save to GitHub if token is available (background operation)
+      const githubToken = localStorage.getItem('github-token');
+      if (githubToken && githubToken.trim()) {
+        setSaveMessage('✅ Post saved! Also syncing to GitHub...');
+        try {
+          await savePostToGitHub(post);
+        } catch (error) {
+          console.warn('GitHub sync failed (but post is saved locally):', error);
+          setSaveMessage('✅ Post saved locally! (GitHub sync failed - check token)');
+        }
+      }
+      
+    } catch (error) {
+      console.error('Failed to save post:', error);
+      setSaveMessage('❌ Failed to save post: ' + (error as Error).message);
+    } finally {
+      setIsSaving(false);
+      setTimeout(() => setSaveMessage(''), 3000);
+    }
   };
 
   const savePostToGitHub = async (post: NewPost) => {
@@ -293,6 +347,26 @@ ${post.content}`;
     setIsCreating(true);
     setIsEditing(false);
     setEditingPost(null);
+  };
+
+  const handleDelete = (slug: string) => {
+    if (window.confirm('Are you sure you want to delete this post?')) {
+      try {
+        deletePost(slug);
+        loadPostsData();
+        setSaveMessage('✅ Post deleted successfully!');
+        setTimeout(() => setSaveMessage(''), 2000);
+      } catch (error) {
+        setSaveMessage('❌ Failed to delete post');
+        setTimeout(() => setSaveMessage(''), 3000);
+      }
+    }
+  };
+
+  const handleRefresh = () => {
+    loadPostsData();
+    setSaveMessage('🔄 Posts refreshed!');
+    setTimeout(() => setSaveMessage(''), 2000);
   };
 
   // Login screen
@@ -457,6 +531,14 @@ ${post.content}`;
               New Post
             </Button>
             <Button 
+              onClick={handleRefresh}
+              variant="outline"
+              className="border-slate-600 text-slate-300 hover:bg-slate-800"
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Refresh
+            </Button>
+            <Button 
               onClick={handleLogout}
               variant="outline"
               className="border-slate-600 text-slate-300 hover:bg-slate-800"
@@ -568,7 +650,7 @@ ${post.content}`;
 
               <div className="flex gap-4">
                 <Button
-                  onClick={() => savePostToGitHub(newPost)}
+                  onClick={() => savePost(newPost)}
                   className="bg-green-600 hover:bg-green-700"
                   disabled={!newPost.title || !newPost.slug || !newPost.content || isSaving}
                 >
@@ -579,8 +661,8 @@ ${post.content}`;
                     </>
                   ) : (
                     <>
-                      <Globe className="w-4 h-4 mr-2" />
-                      {isEditing ? 'Publish Changes' : 'Publish to Website'}
+                      <Save className="w-4 h-4 mr-2" />
+                      {isEditing ? 'Update Post' : 'Save Post'}
                     </>
                   )}
                 </Button>
@@ -591,7 +673,7 @@ ${post.content}`;
                   disabled={!newPost.title || !newPost.slug || !newPost.content || isSaving}
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  Download File
+                  Download Markdown
                 </Button>
                 <Button
                   variant="outline"
@@ -656,6 +738,15 @@ ${post.content}`;
                         disabled={isCreating || isEditing}
                       >
                         <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDelete(post.slug)}
+                        className="text-slate-400 hover:text-red-400"
+                        disabled={isCreating || isEditing}
+                      >
+                        <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
                   </div>
