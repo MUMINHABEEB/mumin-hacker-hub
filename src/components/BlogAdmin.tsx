@@ -111,45 +111,8 @@ ${post.content}`;
   };
 
   const savePostToGitHub = async (post: NewPost) => {
-    setIsSaving(true);
-    setSaveMessage('');
-    
-    try {
-      const content = generateMarkdownContent(post);
-      const filename = `${post.slug}.md`;
-      
-      // Try direct GitHub API first (fallback method)
-      const response = await fetch(`https://api.github.com/repos/MUMINHABEEB/mumin-hacker-hub/contents/src/posts/${filename}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/vnd.github.v3+json',
-          // Will use CORS proxy or browser authentication
-        },
-        body: JSON.stringify({
-          message: isEditing ? `Update blog post: ${post.title}` : `Add new blog post: ${post.title}`,
-          content: btoa(unescape(encodeURIComponent(content))), // Base64 encode
-          ...(isEditing && { sha: await getFileSha(filename) }) // Only include SHA for updates
-        })
-      });
-
-      if (response.ok) {
-        setSaveMessage('✅ Post saved successfully! Changes will be live in a few minutes.');
-        setTimeout(() => {
-          resetForm();
-          loadPostsData();
-        }, 2000);
-      } else {
-        throw new Error(`GitHub API returned ${response.status}`);
-      }
-    } catch (error) {
-      console.error('Error saving post:', error);
-      setSaveMessage(`❌ Online save failed. Download the file and add it manually to src/posts/ folder, then push to GitHub.`);
-      // Automatically trigger download
-      setTimeout(() => downloadPost(post), 1500);
-    }
-    
-    setIsSaving(false);
+    // Simple download-only approach to avoid API calls and server usage
+    downloadPost(post);
   };
 
   const getFileSha = async (filename: string): Promise<string | undefined> => {
@@ -427,8 +390,8 @@ ${post.content}`;
                     </>
                   ) : (
                     <>
-                      <Globe className="w-4 h-4 mr-2" />
-                      {isEditing ? 'Update Post Online' : 'Publish Post Online'}
+                      <Download className="w-4 h-4 mr-2" />
+                      {isEditing ? 'Download Updated Post' : 'Download New Post'}
                     </>
                   )}
                 </Button>
