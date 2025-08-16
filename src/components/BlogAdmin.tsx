@@ -4,7 +4,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Badge } from './ui/badge';
-import { Trash2, Edit, Plus, Save, X, Lock } from 'lucide-react';
+import { Trash2, Edit, Plus, Save, X, Lock, Upload, Download, Globe } from 'lucide-react';
 import { loadPosts, type Post } from '../lib/posts';
 
 interface NewPost {
@@ -29,6 +29,8 @@ const BlogAdmin: React.FC = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingPost, setEditingPost] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
   const [newPost, setNewPost] = useState<NewPost>({
     title: '',
     slug: '',
@@ -106,6 +108,60 @@ excerpt: "${post.excerpt}"
 ---
 
 ${post.content}`;
+  };
+
+  const savePostToGitHub = async (post: NewPost) => {
+    setIsSaving(true);
+    setSaveMessage('');
+    
+    try {
+      const content = generateMarkdownContent(post);
+      const filename = `${post.slug}.md`;
+      
+      // Create a GitHub API request to save the file
+      const response = await fetch(`https://api.github.com/repos/MUMINHABEEB/mumin-hacker-hub/contents/src/posts/${filename}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `token ${process.env.REACT_APP_GITHUB_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: isEditing ? `Update blog post: ${post.title}` : `Add new blog post: ${post.title}`,
+          content: btoa(unescape(encodeURIComponent(content))), // Base64 encode
+          ...(isEditing && { sha: await getFileSha(filename) }) // Only include SHA for updates
+        })
+      });
+
+      if (response.ok) {
+        setSaveMessage('✅ Post saved successfully! Changes will be live in a few minutes.');
+        setTimeout(() => {
+          resetForm();
+          loadPostsData();
+        }, 2000);
+      } else {
+        throw new Error('Failed to save to GitHub');
+      }
+    } catch (error) {
+      console.error('Error saving post:', error);
+      setSaveMessage('❌ Failed to save. Using download instead...');
+      // Fallback to download
+      setTimeout(() => downloadPost(post), 1000);
+    }
+    
+    setIsSaving(false);
+  };
+
+  const getFileSha = async (filename: string): Promise<string | undefined> => {
+    try {
+      const response = await fetch(`https://api.github.com/repos/MUMINHABEEB/mumin-hacker-hub/contents/src/posts/${filename}`);
+      if (response.ok) {
+        const data = await response.json();
+        return data.sha;
+      }
+    } catch (error) {
+      console.error('Error getting file SHA:', error);
+    }
+    return undefined;
   };
 
   const downloadPost = (post: NewPost) => {
@@ -347,21 +403,48 @@ ${post.content}`;
 
               <div className="flex gap-4">
                 <Button
-                  onClick={() => downloadPost(newPost)}
+                  onClick={() => savePostToGitHub(newPost)}
                   className="bg-green-600 hover:bg-green-700"
-                  disabled={!newPost.title || !newPost.slug || !newPost.content}
+                  disabled={!newPost.title || !newPost.slug || !newPost.content || isSaving}
                 >
-                  <Save className="w-4 h-4 mr-2" />
-                  {isEditing ? 'Download Updated File' : 'Download Markdown File'}
+                  {isSaving ? (
+                    <>
+                      <Upload className="w-4 h-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Globe className="w-4 h-4 mr-2" />
+                      {isEditing ? 'Update Post Online' : 'Publish Post Online'}
+                    </>
+                  )}
+                </Button>
+                <Button
+                  onClick={() => downloadPost(newPost)}
+                  variant="outline"
+                  className="border-slate-600 text-slate-300 hover:bg-slate-800"
+                  disabled={!newPost.title || !newPost.slug || !newPost.content || isSaving}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Download File
                 </Button>
                 <Button
                   variant="outline"
                   onClick={resetForm}
                   className="border-slate-600 text-slate-300 hover:bg-slate-800"
+                  disabled={isSaving}
                 >
                   Cancel
                 </Button>
               </div>
+
+              {saveMessage && (
+                <div className={`mt-4 p-3 rounded-lg ${
+                  saveMessage.includes('✅') ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300'
+                }`}>
+                  {saveMessage}
+                </div>
+              )}
 
               {newPost.title && newPost.slug && (
                 <div className="mt-4 p-4 bg-slate-800 rounded-lg">
@@ -369,11 +452,10 @@ ${post.content}`;
                     {isEditing ? 'Updated filename:' : 'Preview filename:'}
                   </p>
                   <code className="text-cyan-400">{newPost.slug}.md</code>
-                  {isEditing && (
-                    <p className="text-xs text-yellow-400 mt-2">
-                      💡 After downloading, replace the existing file in src/posts/ and push to GitHub
-                    </p>
-                  )}
+                  <div className="mt-3 text-xs text-slate-400">
+                    <p>💡 <strong>Online Publishing:</strong> Saves directly to GitHub and goes live automatically</p>
+                    <p>📁 <strong>Download:</strong> Get the file to manually add to your project</p>
+                  </div>
                 </div>
               )}
             </CardContent>
