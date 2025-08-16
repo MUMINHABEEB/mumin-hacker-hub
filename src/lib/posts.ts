@@ -16,15 +16,31 @@ export interface Post extends PostFrontmatter {
 let markdownModules: Record<string, string> = {};
 
 try {
-  // Use the correct Vite glob syntax
-  const glob1 = import.meta.glob("../posts/*.md", { eager: true, query: '?raw', import: 'default' });
-  const glob2 = import.meta.glob("../posts/**/*.md", { eager: true, query: '?raw', import: 'default' });
+  // Try different Vite glob syntax approaches
+  const modules1 = import.meta.glob("../posts/*.md", { 
+    eager: true, 
+    as: 'raw'
+  });
   
-  console.log('[Blog] Glob1 results:', Object.keys(glob1));
-  console.log('[Blog] Glob2 results:', Object.keys(glob2));
+  const modules2 = import.meta.glob("../posts/*.md", { 
+    eager: true,
+    query: '?raw',
+    import: 'default'
+  });
   
-  markdownModules = { ...glob1, ...glob2 } as Record<string, string>;
-  console.log('[Blog] Combined markdown files:', Object.keys(markdownModules));
+  console.log('[Blog] Method 1 - as raw:', Object.keys(modules1));
+  console.log('[Blog] Method 2 - query raw:', Object.keys(modules2));
+  
+  // Use whichever method worked
+  markdownModules = Object.keys(modules1).length > 0 ? modules1 as Record<string, string> 
+                  : modules2 as Record<string, string>;
+  
+  console.log('[Blog] Selected modules:', Object.keys(markdownModules));
+  
+  if (Object.keys(markdownModules).length > 0) {
+    console.log('[Blog] Sample content preview:', Object.values(markdownModules)[0]?.slice(0, 200));
+  }
+  
 } catch (e) {
   console.warn('[Blog] Could not load markdown files via glob:', e);
 }

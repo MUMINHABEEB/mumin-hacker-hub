@@ -1,7 +1,8 @@
 ---
 title: "Test Post - Deployment Check"
+slug: "test-deployment"
 date: "2025-08-16T15:00:00.000Z"
-tags: ["Test"]
+tags: ["test", "deployment"]
 excerpt: "Testing if changes actually deploy to the live website"
 ---
 
