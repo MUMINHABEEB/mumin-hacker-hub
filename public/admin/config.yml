@@ -7,17 +7,13 @@ logo_url: "/favicon.svg"
 media_folder: "public/uploads"
 public_folder: "/uploads"
 
-# Remove editorial workflow for direct publishing
-# publish_mode: editorial_workflow
-
 collections:
   - name: "posts"
     label: "Blog Posts"
     label_singular: "Post"
     folder: "src/posts"
     create: true
-    slug: "{{fields.slug}}"
-    path: "{{fields.slug}}"
+    slug: "{{slug}}"
     extension: "md"
     format: "frontmatter"
     sort: "date:desc"
