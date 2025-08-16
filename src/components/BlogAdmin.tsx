@@ -118,21 +118,15 @@ ${post.content}`;
       const content = generateMarkdownContent(post);
       const filename = `${post.slug}.md`;
       
-      // Try using the same authentication as Decap CMS
-      const authData = localStorage.getItem('gotrue.user');
-      if (!authData) {
-        setSaveMessage('❌ Not authenticated. Please login through Decap CMS first at /admin/');
-        setTimeout(() => downloadPost(post), 2000);
-        setIsSaving(false);
-        return;
-      }
+      // Check if user has set up their own GitHub token
+      const githubToken = localStorage.getItem('github-token') || process.env.REACT_APP_GITHUB_TOKEN;
       
-      const user = JSON.parse(authData);
-      const token = user.token?.access_token;
-      
-      if (!token) {
-        setSaveMessage('❌ No access token found. Please re-login through Decap CMS.');
-        setTimeout(() => downloadPost(post), 2000);
+      if (!githubToken || githubToken.trim() === '') {
+        setSaveMessage('🔑 Setup required: Please add your GitHub Personal Access Token to enable direct publishing.');
+        setTimeout(() => {
+          setSaveMessage('💡 Alternative: Using download method. Save the file to src/posts/ and push to GitHub.');
+          downloadPost(post);
+        }, 3000);
         setIsSaving(false);
         return;
       }
@@ -140,14 +134,14 @@ ${post.content}`;
       // Get file SHA if editing
       let sha: string | undefined;
       if (isEditing) {
-        sha = await getFileSha(filename, token);
+        sha = await getFileSha(filename, githubToken);
       }
       
-      // Use GitHub API with the authentication token from Decap CMS
+      // Use GitHub API with personal access token
       const response = await fetch(`https://api.github.com/repos/MUMINHABEEB/mumin-hacker-hub/contents/src/posts/${filename}`, {
         method: 'PUT',
         headers: {
-          'Authorization': `token ${token}`,
+          'Authorization': `token ${githubToken}`,
           'Content-Type': 'application/json',
           'Accept': 'application/vnd.github.v3+json',
         },
@@ -179,12 +173,14 @@ ${post.content}`;
 
   const getFileSha = async (filename: string, token?: string): Promise<string | undefined> => {
     try {
+      const authToken = token || localStorage.getItem('github-token') || process.env.REACT_APP_GITHUB_TOKEN;
+      
       const headers: any = {
         'Accept': 'application/vnd.github.v3+json',
       };
       
-      if (token) {
-        headers['Authorization'] = `token ${token}`;
+      if (authToken) {
+        headers['Authorization'] = `token ${authToken}`;
       }
       
       const response = await fetch(`https://api.github.com/repos/MUMINHABEEB/mumin-hacker-hub/contents/src/posts/${filename}`, {
@@ -319,10 +315,44 @@ ${post.content}`;
               Blog Admin
             </h1>
             <p className="text-slate-400 mt-2">Manage your blog posts</p>
-            <div className="mt-2 p-3 bg-blue-900 border border-blue-600 rounded-lg">
-              <p className="text-blue-300 text-sm">
-                � <strong>Direct Publishing:</strong> Login through Decap CMS first, then publish directly to website!
-                <br />Both Decap CMS (/admin) and this admin work together seamlessly.
+            <div className="mt-2 p-4 bg-slate-800 border border-slate-600 rounded-lg">
+              <h3 className="text-cyan-400 font-semibold mb-2">🚀 Direct Publishing Setup</h3>
+              <p className="text-slate-300 text-sm mb-3">
+                To publish directly to your website, you need a GitHub Personal Access Token:
+              </p>
+              <ol className="text-slate-300 text-sm space-y-1 mb-3">
+                <li>1. Go to GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)</li>
+                <li>2. Create new token with <code className="bg-slate-700 px-1 rounded">repo</code> permissions</li>
+                <li>3. Copy the token and paste it below:</li>
+              </ol>
+              <div className="flex gap-2">
+                <Input
+                  type="password"
+                  placeholder="Enter your GitHub token..."
+                  className="bg-slate-700 border-slate-500 text-white flex-1"
+                  onChange={(e) => {
+                    if (e.target.value.trim()) {
+                      localStorage.setItem('github-token', e.target.value.trim());
+                    }
+                  }}
+                />
+                <Button 
+                  size="sm"
+                  onClick={() => {
+                    const token = localStorage.getItem('github-token');
+                    if (token) {
+                      alert('✅ Token saved! You can now publish directly to your website.');
+                    } else {
+                      alert('❌ Please enter a valid token first.');
+                    }
+                  }}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  Save
+                </Button>
+              </div>
+              <p className="text-slate-400 text-xs mt-2">
+                💡 Without a token, posts will be downloaded for manual upload.
               </p>
             </div>
           </div>
