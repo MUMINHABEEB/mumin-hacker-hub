@@ -48,9 +48,6 @@ const Hero = () => {
               building a future in digital defense.
             </p>
 
-            <div className="text-xs text-muted-foreground/60 font-mono">
-              🚀 Last Deploy: {new Date().toLocaleString()} | Branch: main ✅
-            </div>
 
             {/* Tech badges */}
             <div className="flex flex-wrap gap-2 sm:gap-3 justify-center lg:justify-start">
