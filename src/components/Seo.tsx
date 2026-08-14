@@ -34,6 +34,10 @@ interface SeoProps {
 const Seo = ({ title, description, path, type = "website", jsonLd }: SeoProps) => {
   const url = `${SITE_URL}${path}`;
 
+  useEffect(() => {
+    removeStaticDuplicates();
+  }, [title, description, path]);
+
   return (
     <Helmet>
       <title>{title}</title>
