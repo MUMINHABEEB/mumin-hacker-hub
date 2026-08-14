@@ -9,7 +9,7 @@ import { apiHelpers } from '@/lib/api';
 interface Project {
   id: string;
   title: string;
-  slug: string;
+  slug?: string;
   description: string;
   long_description?: string;
   technologies: string[];
@@ -17,10 +17,10 @@ interface Project {
   github_url?: string;
   demo_url?: string;
   image_url?: string;
-  status: string;
+  status?: string;
   project_type?: string;
   category?: string;
-  display_order: number;
+  display_order?: number;
   featured: boolean;
   project_date?: string;
   published: boolean;

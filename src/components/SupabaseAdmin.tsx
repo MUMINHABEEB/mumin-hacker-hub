@@ -456,10 +456,10 @@ export function SupabaseAdmin() {
       title: post?.title || '',
       content: post?.content || '',
       platform: post?.platform || '',
-      post_url: post?.post_url || post?.url || '',
+      post_url: post?.post_url || '',
       thumbnail_url: post?.thumbnail_url || '',
       tags: post?.tags?.join(', ') || '',
-      engagement: post?.engagement || post?.metrics || { views: 0, likes: 0, comments: 0, shares: 0 },
+      engagement: post?.engagement || { views: 0, likes: 0, comments: 0, shares: 0 },
       published: post?.published || false,
       featured: post?.featured || false
     });

@@ -1,5 +1,5 @@
 // Debug file to test glob patterns
-console.log('Current working directory:', process.cwd());
+
 console.log('Import meta URL:', import.meta.url);
 
 // Test different glob patterns
