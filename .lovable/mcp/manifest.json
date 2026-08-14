@@ -1,0 +1,189 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.2",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "mumin-hacker-hub",
+      "version": "0.1.0",
+      "title": "mumin-hacker-hub"
+    },
+    "tools": [
+      {
+        "name": "list_projects",
+        "title": "List projects",
+        "description": "List Mumin Habeeb's published portfolio projects, newest or display-order first. Optionally filter to featured projects or a category.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "featured": {
+              "description": "Only return featured projects.",
+              "type": "boolean"
+            },
+            "category": {
+              "description": "Filter by project category.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max projects to return (default 20).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_project",
+        "title": "Get project",
+        "description": "Fetch one published portfolio project in full detail (description, technologies, features, links) by its slug or title.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "slug": {
+              "description": "The project slug.",
+              "type": "string",
+              "minLength": 1
+            },
+            "title": {
+              "description": "The project title, matched case-insensitively.",
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_blog_posts",
+        "title": "List blog posts",
+        "description": "List published blog posts with their titles, slugs, excerpts and tags. Use get_blog_post to read the full body of one post.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "tag": {
+              "description": "Only return posts carrying this tag.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max posts to return (default 20).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_blog_post",
+        "title": "Get blog post",
+        "description": "Read one published blog post in full, including its body content, by slug.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "slug": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The blog post slug."
+            }
+          },
+          "required": [
+            "slug"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_achievements",
+        "title": "List achievements",
+        "description": "List Mumin Habeeb's achievements, certifications and awards. Optionally filter to featured entries, a category, or a type such as 'certificate'.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "featured": {
+              "description": "Only return featured achievements.",
+              "type": "boolean"
+            },
+            "category": {
+              "description": "Filter by achievement category.",
+              "type": "string"
+            },
+            "type": {
+              "description": "Filter by achievement type, e.g. 'certificate'.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max entries to return (default 30).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_social_posts",
+        "title": "List social posts",
+        "description": "List published social media posts shown on the site, optionally filtered to a single platform.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "platform": {
+              "description": "Filter by platform, e.g. 'linkedin', 'github', 'x'.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max posts to return (default 20).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
