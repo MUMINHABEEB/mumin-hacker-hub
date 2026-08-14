@@ -137,7 +137,7 @@ var list_achievements_default = defineTool5({
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ featured, category, type, limit }) => {
-    const filter = {};
+    const filter = { published: { $ne: false } };
     if (featured) filter.featured = true;
     if (category) filter.category = category;
     if (type) filter.type = type;

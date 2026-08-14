@@ -15,7 +15,8 @@ export default defineTool({
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ featured, category, type, limit }) => {
-    const filter: Record<string, unknown> = {};
+    // Never surface entries explicitly withheld from the public site.
+    const filter: Record<string, unknown> = { published: { $ne: false } };
     if (featured) filter.featured = true;
     if (category) filter.category = category;
     if (type) filter.type = type;
