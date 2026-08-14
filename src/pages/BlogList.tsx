@@ -108,7 +108,7 @@ const BlogList = () => {
                   ))}
                 </div>
                 <p className="text-muted-foreground max-w-2xl">{post.excerpt}</p>
-                <Link to={`/blog/${post.slug}`} className="text-primary mt-3 inline-block hover:underline">Read more →</Link>
+                <Link to={`/blog/${post.slug}`} className="text-primary mt-3 inline-block hover:underline">Read full post: {post.title} →</Link>
               </li>
             ))}
           </ul>

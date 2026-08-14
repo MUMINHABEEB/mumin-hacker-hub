@@ -191,9 +191,9 @@ const Projects = () => {
     <section id="projects" className="py-16 sm:py-20 relative">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-cyber mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-cyber mb-4">
             Featured <span className="text-transparent bg-gradient-primary bg-clip-text">Projects</span>
-          </h2>
+          </h1>
           <p className="text-xl text-muted-foreground font-mono max-w-2xl mx-auto">
             <span className="text-primary">//</span> Building tools to make the digital world safer
           </p>
