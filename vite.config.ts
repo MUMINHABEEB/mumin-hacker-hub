@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => {
       host: "::",
       port: 8080,
     },
-    plugins: [react(), apiDevServer()],
+    plugins: [react(), apiDevServer(), mcpPlugin()],
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
