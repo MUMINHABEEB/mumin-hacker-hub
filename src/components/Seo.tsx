@@ -1,4 +1,25 @@
+import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
+
+// The static tags in index.html stay for non-JS crawlers, but once Helmet
+// renders the per-route tags we drop the static duplicates from the DOM.
+const STATIC_DUPLICATES = [
+  'meta[name="description"]',
+  'meta[property="og:title"]',
+  'meta[property="og:description"]',
+  'meta[property="og:type"]',
+  'meta[property="og:url"]',
+  'meta[name="twitter:title"]',
+  'meta[name="twitter:description"]',
+];
+
+function removeStaticDuplicates() {
+  STATIC_DUPLICATES.forEach((selector) => {
+    document
+      .querySelectorAll(`${selector}:not([data-rh])`)
+      .forEach((el) => el.remove());
+  });
+}
 
 export const SITE_URL = "https://mumin-hacker-hub.lovable.app";
 
