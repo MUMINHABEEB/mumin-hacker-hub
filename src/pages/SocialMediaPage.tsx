@@ -17,6 +17,7 @@ import {
   Clock
 } from 'lucide-react';
 import { apiHelpers } from '@/lib/api';
+import Seo from '@/components/Seo';
 
 // Fallback social media posts when Supabase is unavailable
 const fallbackPosts: SocialMediaPost[] = [

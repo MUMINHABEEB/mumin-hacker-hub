@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { ChevronRight, Home, RefreshCw } from "lucide-react";
 import BlogLayout from "@/components/BlogLayout";
+import Seo from "@/components/Seo";
 import { useState, useEffect } from "react";
 import { apiHelpers } from '@/lib/api';
 import type { BlogPost as ApiBlogPost } from '@/lib/api';

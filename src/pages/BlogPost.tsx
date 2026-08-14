@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { ChevronRight, Home, ArrowLeft, RefreshCw } from "lucide-react";
 import NotFound from "./NotFound";
 import BlogLayout from "@/components/BlogLayout";
+import Seo from "@/components/Seo";
 import { useState, useEffect } from "react";
 import { apiHelpers } from '@/lib/api';
 
@@ -77,6 +78,22 @@ const BlogPost = () => {
 
   return (
     <BlogLayout>
+      <Seo
+        title={`${post.title} | Mumin Habeeb`}
+        description={(post.excerpt || post.content).replace(/[#*`>\-]/g, "").slice(0, 155)}
+        path={`/blog/${post.slug}`}
+        type="article"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Article",
+          headline: post.title,
+          datePublished: post.publish_date || post.created_at,
+          dateModified: post.updated_at || post.publish_date || post.created_at,
+          author: { "@type": "Person", name: "Mumin Habeeb" },
+          keywords: post.tags?.join(", "),
+          mainEntityOfPage: `https://mumin-hacker-hub.lovable.app/blog/${post.slug}`,
+        }}
+      />
       <div className="container py-12">
       {/* Breadcrumb Navigation */}
       <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6">
