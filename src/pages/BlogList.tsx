@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { ChevronRight, Home, RefreshCw } from "lucide-react";
 import BlogLayout from "@/components/BlogLayout";
+import Seo from "@/components/Seo";
 import { useState, useEffect } from "react";
 import { apiHelpers } from '@/lib/api';
 import type { BlogPost as ApiBlogPost } from '@/lib/api';
@@ -46,6 +47,11 @@ const BlogList = () => {
 
   return (
     <BlogLayout>
+      <Seo
+        title="Cybersecurity Blog | Mumin Habeeb"
+        description="Articles and notes on penetration testing, cloud security, threat detection, and the journey into cybersecurity by Mumin Habeeb."
+        path="/blog"
+      />
       <div className="container py-12">
         {/* Breadcrumb Navigation */}
         <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6">
@@ -108,7 +114,7 @@ const BlogList = () => {
                   ))}
                 </div>
                 <p className="text-muted-foreground max-w-2xl">{post.excerpt}</p>
-                <Link to={`/blog/${post.slug}`} className="text-primary mt-3 inline-block hover:underline">Read more →</Link>
+                <Link to={`/blog/${post.slug}`} className="text-primary mt-3 inline-block hover:underline">Read full post: {post.title} →</Link>
               </li>
             ))}
           </ul>

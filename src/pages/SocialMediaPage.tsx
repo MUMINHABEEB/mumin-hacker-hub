@@ -17,6 +17,7 @@ import {
   Clock
 } from 'lucide-react';
 import { apiHelpers } from '@/lib/api';
+import Seo from '@/components/Seo';
 
 // Fallback social media posts when Supabase is unavailable
 const fallbackPosts: SocialMediaPost[] = [
@@ -376,6 +377,11 @@ const SocialMediaPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      <Seo
+        title="Social Media Content | Mumin Habeeb"
+        description="LinkedIn posts and YouTube videos by Mumin Habeeb covering cybersecurity tips, tutorials, and security research highlights."
+        path="/social-media"
+      />
       <div className="container mx-auto px-4 py-16">
         {/* Header */}
         <div className="text-center mb-12">
