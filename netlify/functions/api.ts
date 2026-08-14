@@ -264,12 +264,12 @@ const handler: Handler = async (event: HandlerEvent): Promise<HandlerResponse> =
     return { statusCode: 204, headers: CORS_HEADERS, body: '' };
   }
 
-  // Parse path: /api/<resource>[/<id>]
-  const pathParts = (event.path || '')
-    .replace(/^\/api\//, '')
-    .split('/')
-    .filter(Boolean);
+  // Parse path: handle both /api/<resource> and /.netlify/functions/api/<resource>
+  const cleanPath = (event.path || '')
+    .replace(/^\/\.netlify\/functions\/api\/?/, '')
+    .replace(/^\/api\/?/, '');
 
+  const pathParts = cleanPath.split('/').filter(Boolean);
   const resource = pathParts[0];
   const id = pathParts[1] || undefined;
   const method = event.httpMethod;
