@@ -25,7 +25,7 @@ export function db(): Promise<Db> {
   cached = (async () => {
     const client = new MongoClient(uri, { maxPoolSize: 5 } as ConstructorParameters<typeof MongoClient>[1]);
     await client.connect();
-    return client.db();
+    return client.db("portfolio");
   })().catch((err) => {
     cached = null;
     throw err;

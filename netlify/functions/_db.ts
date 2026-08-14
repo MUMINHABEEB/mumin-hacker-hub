@@ -8,7 +8,11 @@ export async function connectDB(): Promise<mongoose.Connection> {
   const uri = process.env.MONGODB_URI;
   if (!uri) throw new Error('MONGODB_URI environment variable is not set');
 
-  const conn = await mongoose.connect(uri, { bufferCommands: false });
+  const conn = await mongoose.connect(uri, {
+    bufferCommands: false,
+    dbName: 'portfolio',
+    serverSelectionTimeoutMS: 10000,
+  });
   cached = conn.connection;
   return cached;
 }
