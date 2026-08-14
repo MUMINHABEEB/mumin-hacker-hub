@@ -23,7 +23,7 @@ export function db(): Promise<Db> {
   if (!uri) throw new Error("MONGODB_URI is not configured for this server");
 
   cached = (async () => {
-    const client = new MongoClient(uri, { maxPoolSize: 5 });
+    const client = new MongoClient(uri, { maxPoolSize: 5 } as ConstructorParameters<typeof MongoClient>[1]);
     await client.connect();
     return client.db();
   })().catch((err) => {
