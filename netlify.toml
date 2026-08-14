@@ -1,6 +1,8 @@
 [build]
   publish = "dist"
   command = "pnpm run build"
+  SECRETS_SCAN_OMIT_KEYS = ["VITE_SUPABASE_PROJECT_ID"]
+  SECRETS_SCAN_OMIT_PATHS = ["supabase/config.toml"]
 
 [build.environment]
   NODE_VERSION = "20"
