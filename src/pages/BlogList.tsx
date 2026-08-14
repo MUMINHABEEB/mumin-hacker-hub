@@ -46,6 +46,11 @@ const BlogList = () => {
 
   return (
     <BlogLayout>
+      <Seo
+        title="Cybersecurity Blog | Mumin Habeeb"
+        description="Articles and notes on penetration testing, cloud security, threat detection, and the journey into cybersecurity by Mumin Habeeb."
+        path="/blog"
+      />
       <div className="container py-12">
         {/* Breadcrumb Navigation */}
         <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6">
